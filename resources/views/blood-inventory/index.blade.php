@@ -30,35 +30,34 @@
 
     <!-- Main Container -->
     <div class="list-container">
-        <!-- Header with Add Button and Filter -->
+        <!-- Header with horizontal layout -->
         <div class="list-header">
-            <div class="list-title">
-                <h3>Blood Inventory ({{ $inventory->total() }})</h3>
-            </div>
-            <div class="list-actions">
-                <form method="GET" action="{{ route('blood-inventory.index') }}" class="filter-row">
+            <form method="GET" action="{{ route('blood-inventory.index') }}" style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                <div style="flex: 1; min-width: 0;">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" 
-                               name="search" 
-                               placeholder="Search blood group or donor..." 
-                               class="search-input"
-                               id="search-input"
-                               value="{{ request('search') }}">
+                        <input type="text" name="search" placeholder="Search blood group or donor..." class="search-input" id="search-input" value="{{ request('search') }}">
+                        @if(request('search'))
+                        <button type="button" class="clear-search" onclick="clearSearch()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        @endif
                     </div>
-                    <select class="sort-select" id="sort-select" name="sort" onchange="this.form.submit()">
+                </div>
+                <div style="min-width: 150px;">
+                    <select class="filter-select" id="sort-select" name="sort" onchange="this.form.submit()">
                         <option value="">Sort by</option>
                         <option value="id_asc" {{ request('sort') == 'id_asc' ? 'selected' : '' }}>ID (Ascending)</option>
                         <option value="id_desc" {{ request('sort') == 'id_desc' ? 'selected' : '' }}>ID (Descending)</option>
                         <option value="quantity_asc" {{ request('sort') == 'quantity_asc' ? 'selected' : '' }}>Quantity (Low to High)</option>
                         <option value="quantity_desc" {{ request('sort') == 'quantity_desc' ? 'selected' : '' }}>Quantity (High to Low)</option>
                     </select>
-                    <a href="{{ route('blood-inventory.create') }}" class="btn btn-add">
-                        <i class="fas fa-plus mr-2"></i>
-                        Add Blood Inventory
-                    </a>
-                </form>
-            </div>
+                </div>
+                <a href="{{ route('blood-inventory.create') }}" class="btn btn-primary btn-add">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add Blood Inventory
+                </a>
+            </form>
         </div>
 
         <!-- Blood Inventory Table -->
@@ -80,10 +79,10 @@
                     <tbody>
                         @foreach($inventory as $item)
                             <tr>
-                                <td>#{{ $item->id }}</td>
+                                <td><span class="data-code">#{{ $item->id }}</span></td>
                                 <td>
                                     @if($item->bloodGroup)
-                                        <span class="blood-badge">
+                                        <span class="blood-group">
                                             {{ $item->bloodGroup->name }}
                                         </span>
                                     @else
@@ -92,7 +91,7 @@
                                 </td>
                                 <td>{{ $item->donor->name ?? 'N/A' }}</td>
                                 <td>
-                                    <span class="data-code">{{ $item->quantity }} ml</span>
+                                    <span>{{ $item->quantity }} ml</span>
                                 </td>
                                 <td>{{ date('Y-m-d', strtotime($item->collection_date)) }}</td>
                                 <td>{{ date('Y-m-d', strtotime($item->expiry_date)) }}</td>
@@ -103,18 +102,18 @@
                                         $diffDays = round(($expiryDate - $today) / (60 * 60 * 24));
                                         
                                         if($diffDays < 0) {
-                                            echo '<span class="badge badge-danger">Expired</span>';
+                                            echo '<span class="status-badge status-cancelled">Expired</span>';
                                         } elseif($diffDays <= 7) {
-                                            echo '<span class="badge badge-warning">Expiring Soon</span>';
+                                            echo '<span class="status-badge status-pending">Expiring Soon</span>';
                                         } else {
-                                            echo '<span class="badge badge-success">Available</span>';
+                                            echo '<span class="status-badge status-completed">Available</span>';
                                         }
                                     @endphp
                                 </td>
                                 <td>
                                     <div class="action-group">
                                         <a href="{{ route('blood-inventory.edit', $item->id) }}" 
-                                           class="btn-action btn-edit" 
+                                           class="btn-action btn-edit-action" 
                                            title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -124,7 +123,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" 
-                                                    class="btn-action btn-delete" 
+                                                    class="btn-action btn-delete-action" 
                                                     title="Delete"
                                                     onclick="confirmDelete(this)">
                                                 <i class="fas fa-trash"></i>
@@ -193,7 +192,7 @@
                             Start by adding your first blood inventory to the system.
                         @endif
                     </p>
-                    <a href="{{ route('blood-inventory.create') }}" class="btn btn-add">
+                    <a href="{{ route('blood-inventory.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus mr-2"></i>
                         Add First Inventory
                     </a>
@@ -202,12 +201,19 @@
         </div>
     </div>
 </div>
+
 <script>
     function confirmDelete(button) {
         if (confirm('Are you sure you want to delete this inventory? This action cannot be undone.')) {
             button.closest('.delete-form').submit();
         }
         return false;
+    }
+
+    function clearSearch() {
+        const searchInput = document.getElementById('search-input');
+        searchInput.value = '';
+        searchInput.closest('form').submit();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -221,28 +227,6 @@
                 this.closest('form').submit();
             }, 500);
         });
-
-        // Clear search button
-        const searchBox = document.querySelector('.search-box');
-        if (searchInput.value) {
-            const clearBtn = document.createElement('span');
-            clearBtn.innerHTML = '×';
-            clearBtn.style.cssText = `
-                position: absolute;
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                cursor: pointer;
-                color: #999;
-                font-size: 18px;
-                font-weight: bold;
-            `;
-            clearBtn.addEventListener('click', function() {
-                searchInput.value = '';
-                searchInput.closest('form').submit();
-            });
-            searchBox.appendChild(clearBtn);
-        }
     });
 </script>
 @endsection
