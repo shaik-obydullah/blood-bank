@@ -30,24 +30,22 @@
 
     <!-- Main Container -->
     <div class="list-container">
-        <!-- Header with Add Button and Filter -->
+        <!-- Header with horizontal layout -->
         <div class="list-header">
-            <div class="list-title">
-                <h3>Patients ({{ $patients->total() }})</h3>
-            </div>
-            <div class="list-actions">
-                <!-- Search and Sort in one line -->
-                <form method="GET" action="{{ route('patients.index') }}" class="filter-row">
+            <form method="GET" action="{{ route('patients.index') }}" style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                <div style="flex: 1; min-width: 0;">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" 
-                               name="search" 
-                               placeholder="Search by name, email or ID..." 
-                               class="search-input"
-                               id="search-input"
-                               value="{{ request('search') }}">
+                        <input type="text" name="search" placeholder="Search by name, email or ID..." class="search-input" id="search-input" value="{{ request('search') }}">
+                        @if(request('search'))
+                        <button type="button" class="clear-search" onclick="clearSearch()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        @endif
                     </div>
-                    <select class="sort-select" id="sort-select" name="sort" onchange="this.form.submit()">
+                </div>
+                <div style="min-width: 150px;">
+                    <select class="filter-select" id="sort-select" name="sort" onchange="this.form.submit()">
                         <option value="">Sort by</option>
                         <option value="id_asc" {{ request('sort') == 'id_asc' ? 'selected' : '' }}>ID (Ascending)</option>
                         <option value="id_desc" {{ request('sort') == 'id_desc' ? 'selected' : '' }}>ID (Descending)</option>
@@ -58,12 +56,12 @@
                         <option value="date_asc" {{ request('sort') == 'date_asc' ? 'selected' : '' }}>Last Blood Date (Oldest)</option>
                         <option value="date_desc" {{ request('sort') == 'date_desc' ? 'selected' : '' }}>Last Blood Date (Newest)</option>
                     </select>
-                    <a href="{{ route('patients.create') }}" class="btn btn-add">
-                        <i class="fas fa-plus mr-2"></i>
-                        Add Patient
-                    </a>
-                </form>
-            </div>
+                </div>
+                <a href="{{ route('patients.create') }}" class="btn btn-primary btn-add">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add Patient
+                </a>
+            </form>
         </div>
 
         <!-- Patients Table -->
@@ -84,10 +82,12 @@
                         @foreach($patients as $patient)
                             <tr>
                                 <td>
-                                    <span class="data-code">{{ $patient->id }}</span>
+                                    <span class="data-code">#{{ $patient->id }}</span>
                                 </td>
                                 <td>
-                                    <strong>{{ $patient->name }}</strong>
+                                    <div class="user-name">
+                                        <strong>{{ $patient->name }}</strong>
+                                    </div>
                                 </td>
                                 <td>{{ $patient->email }}</td>
                                 <td>
@@ -101,7 +101,9 @@
                                 </td>
                                 <td>
                                     @if($patient->last_blood_taking_date)
-                                        {{ date('Y-m-d', strtotime($patient->last_blood_taking_date)) }}
+                                        <div class="created-time">
+                                            {{ date('Y-m-d', strtotime($patient->last_blood_taking_date)) }}
+                                        </div>
                                     @else
                                         <span class="text-muted">Never</span>
                                     @endif
@@ -114,7 +116,7 @@
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="{{ route('patients.edit', $patient->id) }}" 
-                                           class="btn-action btn-edit" 
+                                           class="btn-action btn-edit-action" 
                                            title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -124,7 +126,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" 
-                                                    class="btn-action btn-delete" 
+                                                    class="btn-action btn-delete-action" 
                                                     title="Delete"
                                                     onclick="confirmDelete(this)">
                                                 <i class="fas fa-trash"></i>
@@ -193,7 +195,7 @@
                             Start by adding your first patient to the system.
                         @endif
                     </p>
-                    <a href="{{ route('patients.create') }}" class="btn btn-add">
+                    <a href="{{ route('patients.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus mr-2"></i>
                         Add First Patient
                     </a>
@@ -202,12 +204,19 @@
         </div>
     </div>
 </div>
+
 <script>
     function confirmDelete(button) {
         if (confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
             button.closest('.delete-form').submit();
         }
         return false;
+    }
+
+    function clearSearch() {
+        const searchInput = document.getElementById('search-input');
+        searchInput.value = '';
+        searchInput.closest('form').submit();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -221,42 +230,6 @@
                 this.closest('form').submit();
             }, 500);
         });
-
-        // Clear search button
-        const searchBox = document.querySelector('.search-box');
-        if (searchInput.value) {
-            const clearBtn = document.createElement('span');
-            clearBtn.innerHTML = '×';
-            clearBtn.style.cssText = `
-                position: absolute;
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                cursor: pointer;
-                color: #999;
-                font-size: 18px;
-                font-weight: bold;
-            `;
-            clearBtn.addEventListener('click', function() {
-                searchInput.value = '';
-                searchInput.closest('form').submit();
-            });
-            searchBox.appendChild(clearBtn);
-        }
-
-        // Add view button style if not in CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            .btn-view {
-                color: var(--info);
-                border-color: var(--info);
-            }
-            .btn-view:hover {
-                background: var(--info);
-                color: var(--white);
-            }
-        `;
-        document.head.appendChild(style);
     });
 </script>
 @endsection
