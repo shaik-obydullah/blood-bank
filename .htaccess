@@ -1,0 +1,25 @@
+# To prevent access to .env and other files
+<Files .*>
+# Apache 2.2
+<IfModule !mod_authz_core.c>
+Order deny,allow
+Deny from all
+</IfModule>
+# Apache 2.4
+<IfModule mod_authz_core.c>
+Require all denied
+</IfModule>
+</Files>
+
+# Rewrite rules to remove /public from URL
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Remove public from URL if it's requested directly
+    RewriteCond %{THE_REQUEST} /public/([^\s?]*) [NC]
+    RewriteRule ^ /%1 [L,NE,R=301]
+    
+    # Rewrite to public folder internally
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

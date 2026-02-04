@@ -1,0 +1,26 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('patients', function (Blueprint $table) {
+            $table->integer('id');
+            $table->string('name', 100);
+            $table->string('email', 100);
+            $table->longText('medical_history')->nullable()->collation('utf8mb4_general_ci');
+            $table->string('address', 255)->nullable();
+            $table->date('last_blood_taking_date')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('patients');
+    }
+};
