@@ -124,10 +124,6 @@
                         <h5>Current Details</h5>
                         <div class="preview-content">
                             <div class="preview-row">
-                                <span class="preview-label">ID:</span>
-                                <span class="preview-value">{{ $bloodGroup->id }}</span>
-                            </div>
-                            <div class="preview-row">
                                 <span class="preview-label">Current Name:</span>
                                 <span class="preview-value"
                                     style="color: var(--danger); font-weight: 600;">{{ $bloodGroup->name }}</span>
