@@ -29,107 +29,102 @@
     @endif
 
     <!-- Statistics Cards -->
-    <div class="stats-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px;">
-        <div class="stat-card" style="background: white; border-radius: 8px; padding: 20px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <div class="stat-icon" style="width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white; font-size: 20px; background: #3498db;">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon primary">
                 <i class="fas fa-tint"></i>
             </div>
             <div class="stat-info">
-                <h3 style="margin: 0; font-size: 24px; font-weight: 600; color: #333;">{{ $stats['total_requests'] }}</h3>
-                <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Total Requests</p>
+                <h3>{{ $stats['total_requests'] }}</h3>
+                <p>Total Requests</p>
             </div>
         </div>
         
-        <div class="stat-card" style="background: white; border-radius: 8px; padding: 20px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <div class="stat-icon" style="width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white; font-size: 20px; background: #2ecc71;">
+        <div class="stat-card">
+            <div class="stat-icon success">
                 <i class="fas fa-check-circle"></i>
             </div>
             <div class="stat-info">
-                <h3 style="margin: 0; font-size: 24px; font-weight: 600; color: #333;">{{ $stats['approved_requests'] }}</h3>
-                <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Approved Requests</p>
+                <h3>{{ $stats['approved_requests'] }}</h3>
+                <p>Approved Requests</p>
             </div>
         </div>
         
-        <div class="stat-card" style="background: white; border-radius: 8px; padding: 20px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <div class="stat-icon" style="width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white; font-size: 20px; background: #e74c3c;">
+        <div class="stat-card">
+            <div class="stat-icon danger">
                 <i class="fas fa-times-circle"></i>
             </div>
             <div class="stat-info">
-                <h3 style="margin: 0; font-size: 24px; font-weight: 600; color: #333;">{{ $stats['rejected_requests'] }}</h3>
-                <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Rejected Requests</p>
+                <h3>{{ $stats['rejected_requests'] }}</h3>
+                <p>Rejected Requests</p>
             </div>
         </div>
         
-        <div class="stat-card" style="background: white; border-radius: 8px; padding: 20px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <div class="stat-icon" style="width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white; font-size: 20px; background: #f39c12;">
+        <div class="stat-card">
+            <div class="stat-icon warning">
                 <i class="fas fa-hourglass-half"></i>
             </div>
             <div class="stat-info">
-                <h3 style="margin: 0; font-size: 24px; font-weight: 600; color: #333;">{{ $stats['pending_requests'] }}</h3>
-                <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Pending Requests</p>
+                <h3>{{ $stats['pending_requests'] }}</h3>
+                <p>Pending Requests</p>
             </div>
         </div>
     </div>
 
     <!-- Main Container -->
-    <div class="list-container" style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div class="list-container">
         <!-- Header -->
-        <div class="list-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 30px 30px 20px; border-bottom: 1px solid #eee;">
+        <div class="list-header">
             <div class="list-title">
-                <h3 style="color: #333; margin-bottom: 5px;">Blood Distributions ({{ $distributions->total() }})</h3>
+                <h3>Blood Distributions ({{ $distributions->total() }})</h3>
             </div>
             <div class="list-actions" style="display: flex; gap: 10px;">
-                <a href="{{ route('blood-distributions.create') }}" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center;">
+                <a href="{{ route('blood-distributions.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus mr-2"></i>
                     New Request
-                </a>
-                <a href="{{ route('blood-distributions.statistics') }}" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center;">
-                    <i class="fas fa-chart-bar mr-2"></i>
-                    View Statistics
                 </a>
             </div>
         </div>
 
         <!-- Filter Section -->
-        <div class="filter-section" style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 0 30px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-            <div class="filter-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
-                <h4 style="margin: 0; color: #333; font-size: 16px; font-weight: 600;"><i class="fas fa-filter mr-2"></i>Filters</h4>
+        <div class="filter-section">
+            <div class="filter-header">
+                <h4>Filters</h4>
                 @if(request()->hasAny(['search', 'status', 'patient_id', 'blood_group_id', 'date_from', 'date_to', 'sort']))
-                <a href="{{ route('blood-distributions.index') }}" style="background: #f8f9fa; color: #666; border: 1px solid #dee2e6; padding: 6px 12px; border-radius: 4px; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center;">
-                    <i class="fas fa-times mr-2"></i>
+                <a href="{{ route('blood-distributions.index') }}" class="btn-clear-filters">
                     Clear Filters
                 </a>
                 @endif
             </div>
             
-            <form method="GET" action="{{ route('blood-distributions.index') }}" style="width: 100%;">
-                <div class="filter-grid" style="display: flex; flex-direction: column; gap: 15px;">
+            <form method="GET" action="{{ route('blood-distributions.index') }}">
+                <div class="filter-grid">
                     <!-- Row 1: Search and Status -->
-                    <div class="filter-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="filter-group" style="display: flex; flex-direction: column;">
-                            <label for="search-input" style="color: #555; font-size: 13px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center;">
-                                <i class="fas fa-search mr-2"></i>Search
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="search-input" class="filter-label">
+                                Search
                             </label>
-                            <div class="search-box" style="position: relative; width: 100%;">
+                            <div class="search-box">
                                 <input type="text" 
                                        name="search" 
                                        id="search-input"
-                                       style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; padding-right: 35px;"
+                                       class="search-input"
                                        placeholder="Search by patient, blood group, or ID..."
                                        value="{{ request('search') }}">
                                 @if(request('search'))
-                                <button type="button" class="clear-search" onclick="clearSearch()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #999; cursor: pointer; padding: 4px;">
-                                    <i class="fas fa-times"></i>
+                                <button type="button" class="clear-search" onclick="clearSearch()">
+                                    Clear
                                 </button>
                                 @endif
                             </div>
                         </div>
                         
-                        <div class="filter-group" style="display: flex; flex-direction: column;">
-                            <label for="status" style="color: #555; font-size: 13px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center;">
-                                <i class="fas fa-info-circle mr-2"></i>Status
+                        <div class="filter-group">
+                            <label for="status" class="filter-label">
+                                Status
                             </label>
-                            <select id="status" name="status" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background-color: white; color: #333; font-size: 14px; height: 38px;" onchange="this.form.submit()">
+                            <select id="status" name="status" class="filter-select" onchange="this.form.submit()">
                                 <option value="">All Status</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
@@ -139,12 +134,12 @@
                     </div>
 
                     <!-- Row 2: Patient and Blood Group -->
-                    <div class="filter-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="filter-group" style="display: flex; flex-direction: column;">
-                            <label for="patient_id" style="color: #555; font-size: 13px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center;">
-                                <i class="fas fa-user-injured mr-2"></i>Patient
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="patient_id" class="filter-label">
+                                Patient
                             </label>
-                            <select id="patient_id" name="patient_id" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background-color: white; color: #333; font-size: 14px; height: 38px;" onchange="this.form.submit()">
+                            <select id="patient_id" name="patient_id" class="filter-select" onchange="this.form.submit()">
                                 <option value="">All Patients</option>
                                 @foreach($patients as $patient)
                                     <option value="{{ $patient->id }}" {{ request('patient_id') == $patient->id ? 'selected' : '' }}>
@@ -154,11 +149,11 @@
                             </select>
                         </div>
                         
-                        <div class="filter-group" style="display: flex; flex-direction: column;">
-                            <label for="blood_group_id" style="color: #555; font-size: 13px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center;">
-                                <i class="fas fa-tint mr-2"></i>Blood Group
+                        <div class="filter-group">
+                            <label for="blood_group_id" class="filter-label">
+                                Blood Group
                             </label>
-                            <select id="blood_group_id" name="blood_group_id" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background-color: white; color: #333; font-size: 14px; height: 38px;" onchange="this.form.submit()">
+                            <select id="blood_group_id" name="blood_group_id" class="filter-select" onchange="this.form.submit()">
                                 <option value="">All Blood Groups</option>
                                 @foreach($bloodGroups as $bg)
                                     <option value="{{ $bg->id }}" {{ request('blood_group_id') == $bg->id ? 'selected' : '' }}>
@@ -170,35 +165,39 @@
                     </div>
 
                     <!-- Row 3: Date Range and Sort -->
-                    <div class="filter-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="filter-group" style="display: flex; flex-direction: column;">
-                            <label style="color: #555; font-size: 13px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center;">
-                                <i class="fas fa-calendar-alt mr-2"></i>Date Range
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                Date Range
                             </label>
-                            <div class="date-range" style="width: 100%;">
-                                <div class="date-input-group" style="display: flex; align-items: center; gap: 10px;">
-                                    <input type="date" 
-                                           name="date_from" 
-                                           style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; height: 38px;"
-                                           value="{{ request('date_from') }}"
-                                           placeholder="From Date"
-                                           onchange="this.form.submit()">
-                                    <span class="date-separator" style="color: #666; font-size: 14px; white-space: nowrap;">to</span>
-                                    <input type="date" 
-                                           name="date_to" 
-                                           style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; height: 38px;"
-                                           value="{{ request('date_to') }}"
-                                           placeholder="To Date"
-                                           onchange="this.form.submit()">
+                            <div class="date-range">
+                                <div class="date-input-group">
+                                    <div class="date-input-wrapper">
+                                        <input type="date" 
+                                               name="date_from" 
+                                               class="date-input"
+                                               value="{{ request('date_from') }}"
+                                               placeholder="From Date"
+                                               onchange="this.form.submit()">
+                                    </div>
+                                    <span class="date-separator">to</span>
+                                    <div class="date-input-wrapper">
+                                        <input type="date" 
+                                               name="date_to" 
+                                               class="date-input"
+                                               value="{{ request('date_to') }}"
+                                               placeholder="To Date"
+                                               onchange="this.form.submit()">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="filter-group" style="display: flex; flex-direction: column;">
-                            <label for="sort" style="color: #555; font-size: 13px; font-weight: 500; margin-bottom: 6px; display: flex; align-items: center;">
-                                <i class="fas fa-sort mr-2"></i>Sort By
+                        <div class="filter-group">
+                            <label for="sort" class="filter-label">
+                                Sort By
                             </label>
-                            <select id="sort" name="sort" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background-color: white; color: #333; font-size: 14px; height: 38px;" onchange="this.form.submit()">
+                            <select id="sort" name="sort" class="filter-select" onchange="this.form.submit()">
                                 <option value="">Default</option>
                                 <option value="id_desc" {{ request('sort') == 'id_desc' ? 'selected' : '' }}>Newest First</option>
                                 <option value="id_asc" {{ request('sort') == 'id_asc' ? 'selected' : '' }}>Oldest First</option>
@@ -214,95 +213,86 @@
         </div>
 
         <!-- Blood Distributions Table -->
-        <div class="table-container" style="padding: 0 30px 30px;">
+        <div class="table-container">
             @if($distributions->count() > 0)
-                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                <table class="data-table">
                     <thead>
                         <tr>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa;">ID</th>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa;">Patient</th>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa;">Blood Group</th>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa;">Requested</th>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa;">Approved</th>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa;">Status</th>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa;">Created At</th>
-                            <th style="padding: 12px 15px; text-align: left; color: #333; font-weight: 600; font-size: 14px; border-bottom: 2px solid #eee; background: #f8f9fa; width: 140px;">Actions</th>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Blood Group</th>
+                            <th>Requested</th>
+                            <th>Approved</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th style="width: 140px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($distributions as $distribution)
                             <tr>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">#{{ str_pad($distribution->id, 6, '0', STR_PAD_LEFT) }}</td>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">
-                                    <div class="user-name" style="font-weight: 500; color: #333;">{{ $distribution->patient->name ?? 'N/A' }}</div>
-                                </td>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">
-                                    <div class="blood-group" style="display: flex; flex-direction: column;">
-                                        <span class="blood-badge" style="background: #c62828; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; display: inline-block; width: fit-content;">{{ $distribution->bloodGroup->code ?? 'N/A' }}</span>
-                                        <span class="blood-name" style="font-size: 12px; color: #666; margin-top: 2px;">{{ $distribution->bloodGroup->name ?? '' }}</span>
+                                <td><span class="data-code">#{{ str_pad($distribution->id, 6, '0', STR_PAD_LEFT) }}</span></td>
+                                <td>
+                                    <div class="user-name">
+                                        <i class="fas fa-user"></i>
+                                        {{ $distribution->patient->name ?? 'N/A' }}
                                     </div>
                                 </td>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">
-                                    <span class="request-unit" style="font-weight: 500; color: #333;">{{ $distribution->request_unit }} ML</span>
+                                <td>
+                                    <span class="blood-group">{{ $distribution->bloodGroup->code ?? 'N/A' }}</span>
                                 </td>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">
+                                <td>
+                                    <span>{{ $distribution->request_unit }} ML</span>
+                                </td>
+                                <td>
                                     @if($distribution->approved_unit === null)
-                                        <span class="text-muted" style="color: #999;">-</span>
+                                        <span class="text-muted">-</span>
                                     @else
-                                        <span class="approved-unit" style="font-weight: 500; color: #333;">{{ $distribution->approved_unit }} ML</span>
+                                        <span>{{ $distribution->approved_unit }} ML</span>
                                     @endif
                                 </td>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">
+                                <td>
                                     @php
                                         $statusInfo = [
-                                            'pending' => ['color' => '#f39c12', 'bg_color' => '#fef5e7', 'icon' => 'clock', 'label' => 'Pending'],
-                                            'approved' => ['color' => '#27ae60', 'bg_color' => '#eafaf1', 'icon' => 'check-circle', 'label' => 'Approved'],
-                                            'rejected' => ['color' => '#e74c3c', 'bg_color' => '#fdedec', 'icon' => 'times-circle', 'label' => 'Rejected'],
-                                            'partially_approved' => ['color' => '#3498db', 'bg_color' => '#ebf5fb', 'icon' => 'check-double', 'label' => 'Partial'],
-                                            'fully_approved' => ['color' => '#27ae60', 'bg_color' => '#eafaf1', 'icon' => 'check-circle', 'label' => 'Full'],
-                                            'unknown' => ['color' => '#95a5a6', 'bg_color' => '#f8f9fa', 'icon' => 'question-circle', 'label' => 'Unknown']
+                                            'pending' => ['class' => 'status-pending', 'icon' => 'clock', 'label' => 'Pending'],
+                                            'approved' => ['class' => 'status-completed', 'icon' => 'check-circle', 'label' => 'Approved'],
+                                            'rejected' => ['class' => 'status-cancelled', 'icon' => 'times-circle', 'label' => 'Rejected'],
+                                            'partially_approved' => ['class' => 'status-confirmed', 'icon' => 'check-double', 'label' => 'Partial'],
+                                            'fully_approved' => ['class' => 'status-completed', 'icon' => 'check-circle', 'label' => 'Full'],
+                                            'unknown' => ['class' => 'status-inactive', 'icon' => 'question-circle', 'label' => 'Unknown']
                                         ];
                                         $status = $distribution->status;
                                         $info = $statusInfo[$status] ?? $statusInfo['unknown'];
                                     @endphp
-                                    <span class="status-badge" 
-                                          style="color: {{ $info['color'] }}; background-color: {{ $info['bg_color'] }}; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; white-space: nowrap;">
-                                        <i class="fas fa-{{ $info['icon'] }} mr-1"></i>
+                                    <span class="status-badge {{ $info['class'] }}">
+                                        <i class="fas fa-{{ $info['icon'] }}"></i>
                                         {{ $info['label'] }}
                                     </span>
                                 </td>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">
-                                    <span class="created-time" style="font-size: 13px; color: #666;">
+                                <td>
+                                    <span class="created-time">
+                                        <i class="fas fa-calendar-alt"></i>
                                         {{ $distribution->created_at->format('M d, Y') }}
                                     </span>
                                 </td>
-                                <td style="padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #333;">
-                                    <div class="action-group" style="display: flex; gap: 5px;">
+                                <td>
+                                    <div class="action-group">
                                         <a href="{{ route('blood-distributions.show', $distribution->id) }}" 
                                            class="btn-action btn-view" 
-                                           title="View"
-                                           style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; background: rgba(52, 152, 219, 0.1); color: #3498db;">
+                                           title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="{{ route('blood-distributions.edit', $distribution->id) }}" 
-                                           class="btn-action btn-edit" 
-                                           title="Edit"
-                                           style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; background: rgba(46, 204, 113, 0.1); color: #2ecc71;">
+                                           class="btn-action btn-edit-action" 
+                                           title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @if($distribution->isPending())
                                         <button type="button" 
-                                                class="btn-action btn-approve" 
-                                                title="Approve"
-                                                onclick="showApproveModal({{ $distribution->id }}, {{ $distribution->request_unit }})"
-                                                style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; background: rgba(46, 204, 113, 0.1); color: #2ecc71;">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button type="button" 
-                                                class="btn-action btn-reject" 
+                                                class="btn-action" 
                                                 title="Reject"
                                                 onclick="confirmReject({{ $distribution->id }})"
-                                                style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; background: rgba(231, 76, 60, 0.1); color: #e74c3c;">
+                                                style="background: rgba(231, 76, 60, 0.1); color: #e74c3c;">
                                             <i class="fas fa-times"></i>
                                         </button>
                                         @endif
@@ -312,10 +302,9 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" 
-                                                    class="btn-action btn-delete" 
+                                                    class="btn-action btn-delete-action" 
                                                     title="Delete"
-                                                    onclick="confirmDelete(this)"
-                                                    style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; border: none; cursor: pointer; text-decoration: none; background: rgba(231, 76, 60, 0.1); color: #e74c3c;">
+                                                    onclick="confirmDelete(this)">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -328,17 +317,16 @@
 
                 <!-- Pagination -->
                 @if($distributions->hasPages())
-                    <div class="pagination-section" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
-                        <div class="pagination-info" style="color: #666; font-size: 14px;">
+                    <div class="pagination-section">
+                        <div class="pagination-info">
                             Showing {{ $distributions->firstItem() }} to {{ $distributions->lastItem() }} of {{ $distributions->total() }} entries
                         </div>
                         <div class="pagination-links">
-                            <ul class="pagination-list" style="display: flex; list-style: none; margin: 0; padding: 0; gap: 5px;">
+                            <ul class="pagination-list">
                                 {{-- Previous Button --}}
-                                <li class="pagination-item {{ $distributions->onFirstPage() ? 'disabled' : '' }}" style="opacity: {{ $distributions->onFirstPage() ? '0.5' : '1' }};">
+                                <li class="pagination-item {{ $distributions->onFirstPage() ? 'disabled' : '' }}">
                                     <a href="{{ $distributions->previousPageUrl() ? $distributions->previousPageUrl() . '&' . http_build_query(request()->except('page')) : '#' }}" 
-                                       class="pagination-link prev-link"
-                                       style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 4px; background: #f8f9fa; color: #333; text-decoration: none; border: 1px solid #dee2e6;">
+                                       class="pagination-link prev-link">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
@@ -354,18 +342,16 @@
                                 @for ($i = $start; $i <= $end; $i++)
                                     <li class="pagination-item {{ $i == $current ? 'active' : '' }}">
                                         <a href="{{ $distributions->url($i) . '&' . http_build_query(request()->except('page')) }}" 
-                                           class="pagination-link"
-                                           style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 4px; background: {{ $i == $current ? 'var(--primary)' : '#f8f9fa' }}; color: {{ $i == $current ? 'white' : '#333' }}; text-decoration: none; border: 1px solid #dee2e6;">
+                                           class="pagination-link">
                                             {{ $i }}
                                         </a>
                                     </li>
                                 @endfor
                                 
                                 {{-- Next Button --}}
-                                <li class="pagination-item {{ !$distributions->hasMorePages() ? 'disabled' : '' }}" style="opacity: {{ !$distributions->hasMorePages() ? '0.5' : '1' }}">
+                                <li class="pagination-item {{ !$distributions->hasMorePages() ? 'disabled' : '' }}">
                                     <a href="{{ $distributions->nextPageUrl() ? $distributions->nextPageUrl() . '&' . http_build_query(request()->except('page')) : '#' }}" 
-                                       class="pagination-link next-link"
-                                       style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 4px; background: #f8f9fa; color: #333; text-decoration: none; border: 1px solid #dee2e6;">
+                                       class="pagination-link next-link">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
@@ -375,19 +361,19 @@
                 @endif
             @else
                 <!-- Empty State -->
-                <div class="empty-state" style="text-align: center; padding: 60px 20px;">
-                    <div class="empty-icon" style="margin-bottom: 20px;">
-                        <i class="fas fa-tint" style="font-size: 60px; color: #ddd;"></i>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-tint"></i>
                     </div>
-                    <h4 style="margin: 0 0 10px; color: #333; font-size: 20px;">No Blood Distributions Found</h4>
-                    <p style="color: #666; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                    <h4>No Blood Distributions Found</h4>
+                    <p>
                         @if(request()->hasAny(['search', 'status', 'patient_id', 'blood_group_id', 'date_from', 'date_to']))
                             No blood distributions match your filter criteria. Try adjusting your filters.
                         @else
                             No blood distribution requests have been made yet.
                         @endif
                     </p>
-                    <a href="{{ route('blood-distributions.create') }}" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center;">
+                    <a href="{{ route('blood-distributions.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus mr-2"></i>
                         Create First Request
                     </a>
@@ -396,8 +382,6 @@
         </div>
     </div>
 </div>
-
-
 
 <script>
     function confirmDelete(button) {
@@ -452,74 +436,6 @@
                 this.closest('form').submit();
             }, 500);
         });
-
-        // Table row hover effects
-        const tableRows = document.querySelectorAll('.data-table tbody tr');
-        tableRows.forEach(row => {
-            row.addEventListener('mouseenter', function() {
-                this.style.backgroundColor = 'rgba(198, 40, 40, 0.02)';
-            });
-            row.addEventListener('mouseleave', function() {
-                this.style.backgroundColor = '';
-            });
-        });
     });
 </script>
-
-<style>
-    @media (max-width: 992px) {
-        .filter-row {
-            grid-template-columns: 1fr !important;
-            gap: 15px !important;
-        }
-        
-        .date-input-group {
-            flex-direction: column !important;
-            align-items: stretch !important;
-        }
-        
-        .date-separator {
-            text-align: center !important;
-        }
-        
-        .list-header {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 15px !important;
-        }
-        
-        .list-actions {
-            width: 100% !important;
-        }
-        
-        .list-actions a {
-            flex: 1 !important;
-            justify-content: center !important;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .stats-row {
-            grid-template-columns: 1fr !important;
-        }
-        
-        .filter-section {
-            padding: 15px !important;
-            margin: 0 15px 20px !important;
-        }
-        
-        .table-container {
-            padding: 0 15px 30px !important;
-        }
-        
-        .data-table {
-            display: block;
-            overflow-x: auto;
-        }
-        
-        .action-group {
-            flex-wrap: wrap;
-        }
-    }
-</style>
 @endsection

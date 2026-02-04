@@ -112,5 +112,4 @@ Route::prefix('blood-distributions')->middleware('admin')->group(function () {
     Route::delete('/{bloodDistribution}', [BloodDistributionController::class, 'destroy'])->name('blood-distributions.destroy');
     Route::post('/{bloodDistribution}/approve', [BloodDistributionController::class, 'approve'])->name('blood-distributions.approve');
     Route::post('/{bloodDistribution}/reject', [BloodDistributionController::class, 'reject'])->name('blood-distributions.reject');
-    Route::get('/statistics', [BloodDistributionController::class, 'statistics'])->name('blood-distributions.statistics');
 });

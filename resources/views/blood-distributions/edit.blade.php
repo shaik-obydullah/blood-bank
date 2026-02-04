@@ -31,7 +31,7 @@
             </div>
             <a href="{{ route('blood-distributions.index') }}" class="btn btn-back">
                 <i class="fas fa-arrow-left mr-2"></i>
-                <span class="ml-2">Back to List</span>
+                Back to List
             </a>
         </div>
 
@@ -115,9 +115,6 @@
                                 value="{{ old('request_unit', $bloodDistribution->request_unit) }}"
                                 min="1"
                                 required>
-                            <div class="input-append">
-                                <span class="input-text">ML</span>
-                            </div>
                         </div>
                         @error('request_unit')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -142,9 +139,6 @@
                                 value="{{ old('approved_unit', $bloodDistribution->approved_unit) }}"
                                 min="0"
                                 max="{{ $bloodDistribution->request_unit }}">
-                            <div class="input-append">
-                                <span class="input-text">ML</span>
-                            </div>
                         </div>
                         @error('approved_unit')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -156,59 +150,63 @@
                 </div>
 
                 <!-- Current Status Display -->
-                <div class="status-display-card" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
-                    <h5 style="margin-top: 0; color: #333;">Current Status</h5>
-                    @php
-                        $statusInfo = [
-                            'pending' => ['color' => '#f39c12', 'icon' => 'clock', 'label' => 'Pending'],
-                            'approved' => ['color' => '#27ae60', 'icon' => 'check-circle', 'label' => 'Approved'],
-                            'rejected' => ['color' => '#e74c3c', 'icon' => 'times-circle', 'label' => 'Rejected'],
-                            'partially_approved' => ['color' => '#3498db', 'icon' => 'check-double', 'label' => 'Partially Approved'],
-                            'fully_approved' => ['color' => '#27ae60', 'icon' => 'check-circle', 'label' => 'Fully Approved'],
-                        ];
-                        $status = $bloodDistribution->status;
-                        $info = $statusInfo[$status] ?? $statusInfo['pending'];
-                    @endphp
-                    <div style="display: flex; align-items: center;">
-                        <div style="color: {{ $info['color'] }}; margin-right: 10px; font-size: 20px;">
-                            <i class="fas fa-{{ $info['icon'] }}"></i>
-                        </div>
-                        <div>
-                            <h4 style="color: {{ $info['color'] }}; margin: 0; font-size: 16px;">{{ $info['label'] }}</h4>
-                            <p style="color: #666; margin: 5px 0 0; font-size: 14px;">
-                                @if($bloodDistribution->approved_unit === null)
-                                    Request is pending approval
-                                @elseif($bloodDistribution->approved_unit == 0)
-                                    Request has been rejected
-                                @else
-                                    {{ $bloodDistribution->approved_unit }} ML approved out of {{ $bloodDistribution->request_unit }} ML requested
-                                    ({{ number_format($bloodDistribution->approval_percentage, 1) }}%)
-                                @endif
-                            </p>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-3">Current Status</h5>
+                        @php
+                            $statusInfo = [
+                                'pending' => ['class' => 'status-pending', 'icon' => 'clock', 'label' => 'Pending'],
+                                'approved' => ['class' => 'status-completed', 'icon' => 'check-circle', 'label' => 'Approved'],
+                                'rejected' => ['class' => 'status-cancelled', 'icon' => 'times-circle', 'label' => 'Rejected'],
+                                'partially_approved' => ['class' => 'status-confirmed', 'icon' => 'check-double', 'label' => 'Partially Approved'],
+                                'fully_approved' => ['class' => 'status-completed', 'icon' => 'check-circle', 'label' => 'Fully Approved'],
+                            ];
+                            $status = $bloodDistribution->status;
+                            $info = $statusInfo[$status] ?? $statusInfo['pending'];
+                        @endphp
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3">
+                                <span class="status-badge {{ $info['class'] }}">
+                                    <i class="fas fa-{{ $info['icon'] }}"></i>
+                                    {{ $info['label'] }}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="mb-0">
+                                    @if($bloodDistribution->approved_unit === null)
+                                        Request is pending approval
+                                    @elseif($bloodDistribution->approved_unit == 0)
+                                        Request has been rejected
+                                    @else
+                                        {{ $bloodDistribution->approved_unit }} ML approved out of {{ $bloodDistribution->request_unit }} ML requested
+                                        ({{ number_format($bloodDistribution->approval_percentage, 1) }}%)
+                                    @endif
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Quick Actions -->
                 @if($bloodDistribution->isPending())
-                <div class="quick-actions" style="background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
-                    <h5 style="margin-top: 0; color: #1565c0;">Quick Actions</h5>
-                    <p style="color: #0d47a1; margin-bottom: 10px;">You can quickly approve or reject this request:</p>
-                    <div style="display: flex; gap: 10px;">
+                <div class="alert alert-info mb-3">
+                    <h5 class="alert-heading">Quick Actions</h5>
+                    <p class="mb-2">You can quickly approve or reject this request:</p>
+                    <div class="d-flex gap-2">
                         <button type="button" 
-                                style="background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center;"
+                                class="btn btn-success"
                                 onclick="document.getElementById('approved_unit').value = {{ $bloodDistribution->request_unit }};">
                             <i class="fas fa-check mr-2"></i>
                             Approve Full Amount
                         </button>
                         <button type="button" 
-                                style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center;"
+                                class="btn btn-danger"
                                 onclick="document.getElementById('approved_unit').value = 0;">
                             <i class="fas fa-times mr-2"></i>
                             Reject Request
                         </button>
                         <button type="button" 
-                                style="background: #f39c12; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center;"
+                                class="btn btn-warning"
                                 onclick="document.getElementById('approved_unit').value = '';">
                             <i class="fas fa-clock mr-2"></i>
                             Set as Pending
@@ -225,60 +223,16 @@
                 </a>
                 <a href="{{ route('blood-distributions.show', $bloodDistribution->id) }}" class="btn btn-reset">
                     <i class="fas fa-eye mr-2"></i>
-                    <span class="ml-2">View Details</span>
+                    View Details
                 </a>
                 <button type="submit" class="btn btn-submit">
                     <i class="fas fa-save mr-2"></i>
-                    <span class="ml-2">Update Distribution</span>
+                    Update Distribution
                 </button>
             </div>
         </form>
     </div>
 </div>
-
-<style>
-    .form-row {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .form-row .form-group {
-        flex: 1;
-    }
-    
-    .input-append {
-        background: #f8f9fa;
-        border: 1px solid #ced4da;
-        border-left: none;
-        padding: 0 12px;
-        display: flex;
-        align-items: center;
-        border-radius: 0 4px 4px 0;
-        color: #666;
-    }
-    
-    .input-group {
-        display: flex;
-    }
-    
-    .input-group .form-control {
-        border-right: none;
-        border-radius: 4px 0 0 4px;
-    }
-    
-    @media (max-width: 768px) {
-        .form-row {
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .quick-actions div {
-            flex-direction: column;
-            align-items: stretch;
-        }
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

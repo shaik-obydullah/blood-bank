@@ -6,7 +6,6 @@ use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Donor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
@@ -24,10 +23,10 @@ class AppointmentController extends Controller
                 $q->whereHas('doctor', function ($doctorQuery) use ($search) {
                     $doctorQuery->where('name', 'like', "%{$search}%");
                 })
-                ->orWhereHas('donor', function ($donorQuery) use ($search) {
-                    $donorQuery->where('name', 'like', "%{$search}%");
-                })
-                ->orWhere('id', 'like', "%{$search}%");
+                    ->orWhereHas('donor', function ($donorQuery) use ($search) {
+                        $donorQuery->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('id', 'like', "%{$search}%");
             });
         }
 
@@ -50,7 +49,7 @@ class AppointmentController extends Controller
         if ($request->has('date_from') && !empty($request->date_from)) {
             $query->whereDate('appointment_time', '>=', $request->date_from);
         }
-        
+
         if ($request->has('date_to') && !empty($request->date_to)) {
             $query->whereDate('appointment_time', '<=', $request->date_to);
         }
@@ -79,7 +78,7 @@ class AppointmentController extends Controller
         }
 
         $appointments = $query->paginate(10)->appends($request->query());
-        
+
         // Get doctors and donors for filter dropdowns (all doctors and donors since no status field)
         $doctors = Doctor::orderBy('name')->get();
         $donors = Donor::orderBy('name')->get();
@@ -94,7 +93,7 @@ class AppointmentController extends Controller
     {
         $doctors = Doctor::orderBy('name')->get();
         $donors = Donor::orderBy('name')->get();
-        
+
         return view('appointments.create', compact('doctors', 'donors'));
     }
 
@@ -123,7 +122,7 @@ class AppointmentController extends Controller
     public function show(Appointment $appointment)
     {
         $appointment->load(['doctor', 'donor']);
-        
+
         return view('appointments.show', compact('appointment'));
     }
 
@@ -134,34 +133,34 @@ class AppointmentController extends Controller
     {
         $doctors = Doctor::orderBy('name')->get();
         $donors = Donor::orderBy('name')->get();
-        
+
         return view('appointments.edit', compact('appointment', 'doctors', 'donors'));
     }
 
     /**
- * Update the specified appointment in storage.
- */
-public function update(Request $request, Appointment $appointment)
-{
-    // Combine date and time fields if they exist separately
-    if ($request->has('appointment_date') && $request->has('appointment_time')) {
-        $dateTime = $request->appointment_date . ' ' . $request->appointment_time;
-        $request->merge(['appointment_time' => $dateTime]);
+     * Update the specified appointment in storage.
+     */
+    public function update(Request $request, Appointment $appointment)
+    {
+        // Combine date and time fields if they exist separately
+        if ($request->has('appointment_date') && $request->has('appointment_time')) {
+            $dateTime = $request->appointment_date . ' ' . $request->appointment_time;
+            $request->merge(['appointment_time' => $dateTime]);
+        }
+
+        $validated = $request->validate([
+            'fk_donor_id' => 'required|exists:donors,id',
+            'fk_doctor_id' => 'required|exists:doctors,id',
+            'appointment_time' => 'required',
+            'status' => 'required|in:Pending,Confirmed,Cancelled,Completed',
+            'notes' => 'nullable|string',
+        ]);
+
+        $appointment->update($validated);
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Appointment updated successfully.');
     }
-
-    $validated = $request->validate([
-        'fk_donor_id' => 'required|exists:donors,id',
-        'fk_doctor_id' => 'required|exists:doctors,id',
-        'appointment_time' => 'required',
-        'status' => 'required|in:Pending,Confirmed,Cancelled,Completed',
-        'notes' => 'nullable|string',
-    ]);
-
-    $appointment->update($validated);
-
-    return redirect()->route('appointments.index')
-        ->with('success', 'Appointment updated successfully.');
-}
 
     /**
      * Remove the specified appointment from storage.
@@ -191,6 +190,4 @@ public function update(Request $request, Appointment $appointment)
         return redirect()->back()
             ->with('success', "Appointment status changed from {$oldStatus} to {$newStatus}.");
     }
-
-  
 }

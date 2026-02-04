@@ -6,7 +6,6 @@ use App\Models\BloodDistribution;
 use App\Models\Patient;
 use App\Models\BloodGroup;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BloodDistributionController extends Controller
 {
@@ -203,49 +202,5 @@ class BloodDistributionController extends Controller
 
         return redirect()->route('blood-distributions.index')
             ->with('success', 'Blood distribution rejected successfully.');
-    }
-
-    /**
-     * Get statistics page.
-     */
-    public function statistics()
-    {
-        $stats = BloodDistribution::getStatistics();
-        
-        // Get monthly distribution data
-        $monthlyData = BloodDistribution::select(
-            DB::raw('YEAR(created_at) as year'),
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('SUM(request_unit) as total_requested'),
-            DB::raw('SUM(approved_unit) as total_approved'),
-            DB::raw('COUNT(*) as total_requests')
-        )
-        ->whereYear('created_at', date('Y'))
-        ->groupBy('year', 'month')
-        ->orderBy('year', 'desc')
-        ->orderBy('month', 'desc')
-        ->get();
-
-        // Get top requested blood groups
-        $topBloodGroups = BloodDistribution::select(
-            'fk_blood_group_id',
-            DB::raw('COUNT(*) as request_count'),
-            DB::raw('SUM(request_unit) as total_requested'),
-            DB::raw('SUM(approved_unit) as total_approved')
-        )
-        ->with('bloodGroup')
-        ->groupBy('fk_blood_group_id')
-        ->orderBy('request_count', 'desc')
-        ->limit(10)
-        ->get();
-
-        // Get status distribution
-        $statusData = [
-            'pending' => BloodDistribution::whereNull('approved_unit')->count(),
-            'approved' => BloodDistribution::whereNotNull('approved_unit')->where('approved_unit', '>', 0)->count(),
-            'rejected' => BloodDistribution::whereNotNull('approved_unit')->where('approved_unit', 0)->count(),
-        ];
-
-        return view('blood-distributions.statistics', compact('stats', 'monthlyData', 'topBloodGroups', 'statusData'));
     }
 }
