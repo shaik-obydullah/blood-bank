@@ -49,7 +49,7 @@
                                 <div class="status-icon">
                                     <!-- Icon removed -->
                                 </div>
-                                <div class="status-content">
+                                <div class="alert-success">
                                     <h4>{{ $appointment->status }}</h4>
                                     <p>Current appointment status</p>
                                 </div>
@@ -57,7 +57,7 @@
                             
                             <!-- Status Actions -->
                             @if($appointment->status !== 'Completed' && $appointment->status !== 'Cancelled')
-                            <div class="status-actions">
+                            <div class="status-actions mt-2">
                                 <form action="{{ route('appointments.status', $appointment->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @if($appointment->status === 'Pending')
