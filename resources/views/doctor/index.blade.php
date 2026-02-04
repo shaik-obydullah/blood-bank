@@ -29,44 +29,33 @@
 
         <!-- List Container -->
         <div class="list-container">
-            <!-- Header -->
+            <!-- Header with horizontal layout -->
             <div class="list-header">
-                <div class="list-title">
-                    <h3>Doctors List</h3>
-                </div>
-                <div class="filter-row">
-                    <!-- Search -->
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <form method="GET" action="{{ route('doctors.index') }}" class="d-inline">
-                            <input type="text" name="search" class="search-input" placeholder="Search doctors..."
-                                value="{{ request('search') }}">
-                        </form>
+                <form method="GET" action="{{ route('doctors.index') }}" style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="search" placeholder="Search doctors..." class="search-input" id="search-input" value="{{ request('search') }}">
+                            @if(request('search'))
+                            <button type="button" class="clear-search" onclick="clearSearch()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            @endif
+                        </div>
                     </div>
-
-                    <!-- Sort -->
-                    <form method="GET" action="{{ route('doctors.index') }}" id="filter-form" class="d-inline">
-                        @if(request('search'))
-                            <input type="hidden" name="search" value="{{ request('search') }}">
-                        @endif
-                        <select name="sort" class="sort-select" onchange="this.form.submit()">
-                            <option value="id_asc" {{ request('sort') == 'id_asc' ? 'selected' : '' }}>Sort by: ID (Asc)
-                            </option>
-                            <option value="id_desc" {{ request('sort') == 'id_desc' ? 'selected' : '' }}>Sort by: ID (Desc)
-                            </option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Sort by: Name (A-Z)
-                            </option>
-                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Sort by: Name
-                                (Z-A)</option>
+                    <div style="min-width: 150px;">
+                        <select class="filter-select" id="sort-select" name="sort" onchange="this.form.submit()">
+                            <option value="id_asc" {{ request('sort') == 'id_asc' ? 'selected' : '' }}>Sort by: ID (Asc)</option>
+                            <option value="id_desc" {{ request('sort') == 'id_desc' ? 'selected' : '' }}>Sort by: ID (Desc)</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Sort by: Name (A-Z)</option>
+                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Sort by: Name (Z-A)</option>
                         </select>
-                    </form>
-
-                    <!-- Add Button -->
-                    <a href="{{ route('doctors.create') }}" class="btn btn-add">
+                    </div>
+                    <a href="{{ route('doctors.create') }}" class="btn btn-primary btn-add">
                         <i class="fas fa-plus mr-2"></i>
                         Add Doctor
                     </a>
-                </div>
+                </form>
             </div>
 
             <!-- Table -->
@@ -104,17 +93,13 @@
                                     </td>
                                     <td>
                                         <div class="action-group">
-
-                                            <a href="{{ route('doctors.edit', $doctor->id) }}" class="btn-action btn-edit"
-                                                title="Edit">
+                                            <a href="{{ route('doctors.edit', $doctor->id) }}" class="btn-action btn-edit-action" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('doctors.destroy', $doctor->id) }}" method="POST"
-                                                class="delete-form"
-                                                onsubmit="return confirm('Are you sure you want to delete this doctor?')">
+                                            <form action="{{ route('doctors.destroy', $doctor->id) }}" method="POST" class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn-action btn-delete" title="Delete">
+                                                <button type="button" class="btn-action btn-delete-action" title="Delete" onclick="confirmDelete(this)">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -130,8 +115,14 @@
                             <i class="fas fa-user-md"></i>
                         </div>
                         <h4>No Doctors Found</h4>
-                        <p>There are no doctors in the system yet.</p>
-                        <a href="{{ route('doctors.create') }}" class="btn btn-add">
+                        <p>
+                            @if(request('search'))
+                                No doctors found for "{{ request('search') }}". Try a different search term.
+                            @else
+                                There are no doctors in the system yet.
+                            @endif
+                        </p>
+                        <a href="{{ route('doctors.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus mr-2"></i>
                             Add First Doctor
                         </a>
@@ -185,24 +176,29 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Auto-submit search on input change with delay
-            const searchInput = document.querySelector('.search-input');
-            let searchTimeout;
+        function confirmDelete(button) {
+            if (confirm('Are you sure you want to delete this doctor?')) {
+                button.closest('.delete-form').submit();
+            }
+            return false;
+        }
 
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = '';
+            searchInput.closest('form').submit();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Auto-submit search on input with debounce
+            const searchInput = document.getElementById('search-input');
+            let searchTimer;
+            
             searchInput.addEventListener('input', function () {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
                     this.closest('form').submit();
                 }, 500);
-            });
-
-            // Submit form when Enter is pressed in search
-            searchInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.closest('form').submit();
-                }
             });
         });
     </script>
