@@ -27,7 +27,7 @@
             <!-- Header with Back Button -->
             <div class="form-header">
                 <div class="form-title">
-                    <h3><i class="fas fa-user-edit mr-2 text-danger"></i> Edit Donor</h3>
+                    <h3>Edit Donor</h3>
                     <p class="form-subtitle">Update donor information for {{ $donor->name }}</p>
                 </div>
                 <a href="{{ route('donors.show', $donor->id) }}" class="btn btn-back">
@@ -45,7 +45,6 @@
                     <!-- Personal Information -->
                     <div class="form-section">
                         <h5 class="section-title">
-                            <i class="fas fa-user-circle mr-2"></i>
                             Personal Information
                         </h5>
                         
@@ -131,12 +130,11 @@
                                            id="birthdate" 
                                            name="birthdate" 
                                            class="form-control @error('birthdate') is-invalid @enderror" 
-                                           value="{{ old('birthdate', $donor->birthdate) }}"
+                                           value="{{ old('birthdate', $donor->birthdate ? \Carbon\Carbon::parse($donor->birthdate)->format('Y-m-d') : '') }}"
                                            required
                                            max="{{ \Carbon\Carbon::now()->subYears(18)->format('Y-m-d') }}">
                                 </div>
-                                <small class="form-text text-muted">
-                                    <i class="fas fa-info-circle mr-1"></i>
+                                <small class="form-text">
                                     Donor must be at least 18 years old
                                 </small>
                                 @error('birthdate')
@@ -149,7 +147,6 @@
                     <!-- Blood Information -->
                     <div class="form-section">
                         <h5 class="section-title">
-                            <i class="fas fa-heartbeat mr-2 text-danger"></i>
                             Blood Information
                         </h5>
                         
@@ -199,8 +196,7 @@
                                            max="20"
                                            placeholder="e.g., 14.5">
                                 </div>
-                                <small class="form-text text-muted">
-                                    <i class="fas fa-info-circle mr-1"></i>
+                                <small class="form-text">
                                     Normal range: 12.0-16.0 g/dL (women), 13.5-17.5 g/dL (men)
                                 </small>
                                 @error('hemoglobin_level')
@@ -239,8 +235,7 @@
                                                placeholder="Diastolic">
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">
-                                    <i class="fas fa-info-circle mr-1"></i>
+                                <small class="form-text">
                                     Format: Systolic/Diastolic (e.g., 120/80)
                                 </small>
                                 @error('systolic')
@@ -264,11 +259,10 @@
                                            id="last_donation_date" 
                                            name="last_donation_date" 
                                            class="form-control @error('last_donation_date') is-invalid @enderror" 
-                                           value="{{ old('last_donation_date', $donor->last_donation_date) }}"
+                                           value="{{ old('last_donation_date', $donor->last_donation_date ? \Carbon\Carbon::parse($donor->last_donation_date)->format('Y-m-d') : '') }}"
                                            max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 </div>
-                                <small class="form-text text-muted">
-                                    <i class="fas fa-info-circle mr-1"></i>
+                                <small class="form-text">
                                     Leave empty if first-time donor
                                 </small>
                                 @error('last_donation_date')
@@ -281,7 +275,6 @@
                     <!-- Address Information -->
                     <div class="form-section">
                         <h5 class="section-title">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
                             Address Information
                         </h5>
                         
@@ -363,7 +356,7 @@
                     <a href="{{ route('donors.show', $donor->id) }}" class="btn btn-cancel">
                         Cancel
                     </a>
-                    <button type="reset" class="btn btn-reset">
+                    <button type="button" class="btn btn-reset" onclick="resetForm()">
                         Reset Changes
                     </button>
                     <button type="submit" class="btn btn-submit">
@@ -376,96 +369,91 @@
     </div>
 
     <script>
+        // Store original form values
+        const originalFormValues = {
+            name: document.getElementById('name')?.value || '',
+            email: document.getElementById('email')?.value || '',
+            mobile: document.getElementById('mobile')?.value || '',
+            birthdate: document.getElementById('birthdate')?.value || '',
+            fk_blood_group_id: document.getElementById('fk_blood_group_id')?.value || '',
+            hemoglobin_level: document.getElementById('hemoglobin_level')?.value || '',
+            systolic: document.getElementById('systolic')?.value || '',
+            diastolic: document.getElementById('diastolic')?.value || '',
+            last_donation_date: document.getElementById('last_donation_date')?.value || '',
+            country: document.getElementById('country')?.value || '',
+            address_line_1: document.getElementById('address_line_1')?.value || '',
+            address_line_2: document.getElementById('address_line_2')?.value || ''
+        };
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset all changes to original values?')) {
+                // Reset all form fields to original values
+                if (document.getElementById('name')) document.getElementById('name').value = originalFormValues.name;
+                if (document.getElementById('email')) document.getElementById('email').value = originalFormValues.email;
+                if (document.getElementById('mobile')) document.getElementById('mobile').value = originalFormValues.mobile;
+                if (document.getElementById('birthdate')) document.getElementById('birthdate').value = originalFormValues.birthdate;
+                if (document.getElementById('fk_blood_group_id')) document.getElementById('fk_blood_group_id').value = originalFormValues.fk_blood_group_id;
+                if (document.getElementById('hemoglobin_level')) document.getElementById('hemoglobin_level').value = originalFormValues.hemoglobin_level;
+                if (document.getElementById('systolic')) document.getElementById('systolic').value = originalFormValues.systolic;
+                if (document.getElementById('diastolic')) document.getElementById('diastolic').value = originalFormValues.diastolic;
+                if (document.getElementById('last_donation_date')) document.getElementById('last_donation_date').value = originalFormValues.last_donation_date;
+                if (document.getElementById('country')) document.getElementById('country').value = originalFormValues.country;
+                if (document.getElementById('address_line_1')) document.getElementById('address_line_1').value = originalFormValues.address_line_1;
+                if (document.getElementById('address_line_2')) document.getElementById('address_line_2').value = originalFormValues.address_line_2;
+                
+                // Clear validation errors
+                document.querySelectorAll('.is-invalid').forEach(el => {
+                    el.classList.remove('is-invalid');
+                });
+                
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Form has been reset to original values.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                `;
+                
+                const existingAlert = document.querySelector('.alert-success');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+                
+                document.querySelector('.form-body').insertBefore(alertDiv, document.querySelector('.form-body').firstChild);
+                
+                // Auto-remove success message after 3 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 3000);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Set max dates
             const today = new Date().toISOString().split('T')[0];
             const minBirthdate = new Date();
             minBirthdate.setFullYear(minBirthdate.getFullYear() - 18);
             
-            document.getElementById('last_donation_date').max = today;
-            document.getElementById('birthdate').max = minBirthdate.toISOString().split('T')[0];
-            
-            // Mobile number formatting
-            const mobileInput = document.getElementById('mobile');
-            
-            mobileInput.addEventListener('input', function() {
-                // Remove all non-digit and plus sign characters except the first plus
-                let value = this.value;
-                const hasPlus = value.startsWith('+');
-                
-                // Keep only digits
-                value = value.replace(/\D/g, '');
-                
-                // Add back plus if it was there
-                if (hasPlus && value) {
-                    value = '+' + value;
-                }
-                
-                this.value = value;
-            });
-
-            // Hemoglobin level validation
-            const hemoglobinInput = document.getElementById('hemoglobin_level');
-            
-            hemoglobinInput.addEventListener('change', function() {
-                const value = parseFloat(this.value);
-                if (!isNaN(value) && (value < 0 || value > 20)) {
-                    this.classList.add('is-invalid');
-                    this.nextElementSibling.innerHTML = `
-                        <i class="fas fa-exclamation-triangle mr-1"></i>
-                        Value must be between 0 and 20 g/dL
-                    `;
-                } else {
-                    this.classList.remove('is-invalid');
-                }
-            });
-
-            // Blood pressure validation
-            const systolicInput = document.getElementById('systolic');
-            const diastolicInput = document.getElementById('diastolic');
-            
-            function validateBloodPressure() {
-                const systolic = parseInt(systolicInput.value);
-                const diastolic = parseInt(diastolicInput.value);
-                
-                if (!isNaN(systolic) && (systolic < 70 || systolic > 200)) {
-                    systolicInput.classList.add('is-invalid');
-                } else {
-                    systolicInput.classList.remove('is-invalid');
-                }
-                
-                if (!isNaN(diastolic) && (diastolic < 40 || diastolic > 130)) {
-                    diastolicInput.classList.add('is-invalid');
-                } else {
-                    diastolicInput.classList.remove('is-invalid');
-                }
-                
-                if (!isNaN(systolic) && !isNaN(diastolic) && systolic <= diastolic) {
-                    systolicInput.classList.add('is-invalid');
-                    diastolicInput.classList.add('is-invalid');
-                    diastolicInput.nextElementSibling.innerHTML = `
-                        <i class="fas fa-exclamation-triangle mr-1"></i>
-                        Systolic must be greater than diastolic
-                    `;
-                }
+            if (document.getElementById('last_donation_date')) {
+                document.getElementById('last_donation_date').max = today;
             }
-            
-            systolicInput.addEventListener('change', validateBloodPressure);
-            diastolicInput.addEventListener('change', validateBloodPressure);
+            if (document.getElementById('birthdate')) {
+                document.getElementById('birthdate').max = minBirthdate.toISOString().split('T')[0];
+            }
 
             // Form validation
             const form = document.querySelector('form');
-            const requiredInputs = form.querySelectorAll('[required]');
             
             form.addEventListener('submit', function(e) {
                 let isValid = true;
                 
-                // Clear previous errors
-                form.querySelectorAll('.is-invalid').forEach(el => {
-                    el.classList.remove('is-invalid');
-                });
-
                 // Validate required fields
+                const requiredInputs = form.querySelectorAll('[required]');
                 requiredInputs.forEach(input => {
                     if (!input.value.trim()) {
                         input.classList.add('is-invalid');
@@ -475,7 +463,7 @@
 
                 // Validate birthdate
                 const birthdateInput = document.getElementById('birthdate');
-                if (birthdateInput.value) {
+                if (birthdateInput && birthdateInput.value) {
                     const birthdate = new Date(birthdateInput.value);
                     const minDate = new Date();
                     minDate.setFullYear(minDate.getFullYear() - 18);
@@ -491,145 +479,6 @@
                     alert('Please fill in all required fields correctly.');
                 }
             });
-
-            // Reset button functionality
-            const resetButton = document.querySelector('button[type="reset"]');
-            const originalValues = {
-                name: '{{ old("name", $donor->name) }}',
-                email: '{{ old("email", $donor->email) }}',
-                mobile: '{{ old("mobile", $donor->mobile) }}',
-                birthdate: '{{ old("birthdate", $donor->birthdate) }}',
-                fk_blood_group_id: '{{ old("fk_blood_group_id", $donor->fk_blood_group_id) }}',
-                hemoglobin_level: '{{ old("hemoglobin_level", $donor->hemoglobin_level) }}',
-                systolic: '{{ old("systolic", $donor->systolic) }}',
-                diastolic: '{{ old("diastolic", $donor->diastolic) }}',
-                last_donation_date: '{{ old("last_donation_date", $donor->last_donation_date) }}',
-                country: '{{ old("country", $donor->country) }}',
-                address_line_1: '{{ old("address_line_1", $donor->address_line_1) }}',
-                address_line_2: '{{ old("address_line_2", $donor->address_line_2) }}'
-            };
-
-            resetButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                if (confirm('Are you sure you want to reset all changes to original values?')) {
-                    // Reset all form fields to original values
-                    document.getElementById('name').value = originalValues.name;
-                    document.getElementById('email').value = originalValues.email;
-                    document.getElementById('mobile').value = originalValues.mobile;
-                    document.getElementById('birthdate').value = originalValues.birthdate;
-                    document.getElementById('fk_blood_group_id').value = originalValues.fk_blood_group_id;
-                    document.getElementById('hemoglobin_level').value = originalValues.hemoglobin_level;
-                    document.getElementById('systolic').value = originalValues.systolic;
-                    document.getElementById('diastolic').value = originalValues.diastolic;
-                    document.getElementById('last_donation_date').value = originalValues.last_donation_date;
-                    document.getElementById('country').value = originalValues.country;
-                    document.getElementById('address_line_1').value = originalValues.address_line_1;
-                    document.getElementById('address_line_2').value = originalValues.address_line_2;
-                    
-                    // Clear validation errors
-                    form.querySelectorAll('.is-invalid').forEach(el => {
-                        el.classList.remove('is-invalid');
-                    });
-                    
-                    // Show success message
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
-                    alertDiv.innerHTML = `
-                        <i class="fas fa-check-circle mr-2"></i>
-                        Form has been reset to original values.
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    `;
-                    
-                    const existingAlert = document.querySelector('.alert-success');
-                    if (existingAlert) {
-                        existingAlert.remove();
-                    }
-                    
-                    form.parentNode.insertBefore(alertDiv, form.nextSibling);
-                    
-                    // Auto-remove success message after 3 seconds
-                    setTimeout(() => {
-                        if (alertDiv.parentNode) {
-                            alertDiv.remove();
-                        }
-                    }, 3000);
-                }
-            });
         });
     </script>
 @endsection
-
-<style>
-    /* Blood pressure input group */
-    .bp-input-group {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .bp-input-group .input-group {
-        flex: 1;
-    }
-    
-    .bp-separator {
-        font-weight: 600;
-        color: var(--text-secondary);
-        font-size: 18px;
-        min-width: 20px;
-        text-align: center;
-    }
-    
-    @media (max-width: 768px) {
-        .bp-input-group {
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .bp-separator {
-            display: none;
-        }
-    }
-    
-    /* Section styling */
-    .form-section {
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    .section-title {
-        color: var(--primary);
-        font-weight: 600;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-    }
-    
-    /* Form row for responsive grid */
-    .form-row {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-    
-    @media (max-width: 768px) {
-        .form-row {
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-    }
-    
-    /* Help text styling */
-    .form-text {
-        margin-top: 5px;
-        font-size: 13px;
-    }
-    
-    .form-text i {
-        font-size: 12px;
-    }
-</style>

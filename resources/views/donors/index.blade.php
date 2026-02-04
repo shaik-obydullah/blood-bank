@@ -29,48 +29,35 @@
 
         <!-- List Container -->
         <div class="list-container">
-            <!-- Header -->
+            <!-- Header with horizontal layout -->
             <div class="list-header">
-                <div class="list-title">
-                    <h3>Donors List</h3>
-                </div>
-                <div class="filter-row">
-                    <!-- Search -->
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <form method="GET" action="{{ route('donors.index') }}" class="d-inline">
-                            <input type="text" name="search" class="search-input"
-                                placeholder="Search by name, mobile, or email..." value="{{ request('search') }}">
-                        </form>
+                <form method="GET" action="{{ route('donors.index') }}" style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="search" placeholder="Search by name, mobile, or email..." class="search-input" id="search-input" value="{{ request('search') }}">
+                            @if(request('search'))
+                            <button type="button" class="clear-search" onclick="clearSearch()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            @endif
+                        </div>
                     </div>
-
-                    <!-- Sort -->
-                    <form method="GET" action="{{ route('donors.index') }}" id="filter-form" class="d-inline">
-                        @if(request('search'))
-                            <input type="hidden" name="search" value="{{ request('search') }}">
-                        @endif
-                        <select name="sort" class="sort-select" onchange="this.form.submit()">
-                            <option value="id_asc" {{ request('sort') == 'id_asc' ? 'selected' : '' }}>Sort by: ID (Asc)
-                            </option>
-                            <option value="id_desc" {{ request('sort') == 'id_desc' ? 'selected' : '' }}>Sort by: ID (Desc)
-                            </option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Sort by: Name (A-Z)
-                            </option>
-                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Sort by: Name
-                                (Z-A)</option>
-                            <option value="recent_donors" {{ request('sort') == 'recent_donors' ? 'selected' : '' }}>Recent
-                                Donors</option>
-                            <option value="eligible_first" {{ request('sort') == 'eligible_first' ? 'selected' : '' }}>
-                                Eligible First</option>
+                    <div style="min-width: 150px;">
+                        <select class="filter-select" id="sort-select" name="sort" onchange="this.form.submit()">
+                            <option value="id_asc" {{ request('sort') == 'id_asc' ? 'selected' : '' }}>Sort by: ID (Asc)</option>
+                            <option value="id_desc" {{ request('sort') == 'id_desc' ? 'selected' : '' }}>Sort by: ID (Desc)</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Sort by: Name (A-Z)</option>
+                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Sort by: Name (Z-A)</option>
+                            <option value="recent_donors" {{ request('sort') == 'recent_donors' ? 'selected' : '' }}>Recent Donors</option>
+                            <option value="eligible_first" {{ request('sort') == 'eligible_first' ? 'selected' : '' }}>Eligible First</option>
                         </select>
-                    </form>
-
-                    <!-- Add Button -->
-                    <a href="{{ route('donors.create') }}" class="btn btn-add">
+                    </div>
+                    <a href="{{ route('donors.create') }}" class="btn btn-primary btn-add">
                         <i class="fas fa-user-plus mr-2"></i>
-                        <span class="ml-2">Add Donor</span>
+                        Add Donor
                     </a>
-                </div>
+                </form>
             </div>
 
             <!-- Table -->
@@ -96,17 +83,19 @@
                                         <span class="data-id">#{{ $donor->id }}</span>
                                     </td>
                                     <td>
-                                        <strong>{{ $donor->name }}</strong>
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-globe mr-1"></i>
-                                            {{ $donor->country ?? 'Not specified' }}
-                                        </small>
+                                        <div class="user-name">
+                                            <strong>{{ $donor->name }}</strong>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-globe mr-1"></i>
+                                                {{ $donor->country ?? 'Not specified' }}
+                                            </small>
+                                        </div>
                                     </td>
                                     <td>
                                         @if($donor->bloodGroup)
-                                            <span
-                                                class="blood-badge blood-{{ strtolower(str_replace(['+', '-'], ['p', 'n'], $donor->bloodGroup->code)) }}">
+                                            <span class="blood-group">
                                                 {{ $donor->bloodGroup->code }}
                                             </span>
                                         @else
@@ -131,8 +120,9 @@
                                     </td>
                                     <td>
                                         @if($donor->birthdate)
-                                            {{ \Carbon\Carbon::parse($donor->birthdate)->format('M d, Y') }}
-                                            <br>
+                                            <div class="created-time">
+                                                {{ \Carbon\Carbon::parse($donor->birthdate)->format('M d, Y') }}
+                                            </div>
                                             <small class="text-muted">
                                                 ({{ \Carbon\Carbon::parse($donor->birthdate)->age }} years)
                                             </small>
@@ -142,8 +132,9 @@
                                     </td>
                                     <td>
                                         @if($donor->last_donation_date)
-                                            {{ \Carbon\Carbon::parse($donor->last_donation_date)->format('M d, Y') }}
-                                            <br>
+                                            <div class="created-time">
+                                                {{ \Carbon\Carbon::parse($donor->last_donation_date)->format('M d, Y') }}
+                                            </div>
                                             <small class="text-muted">
                                                 {{ \Carbon\Carbon::parse($donor->last_donation_date)->diffForHumans() }}
                                             </small>
@@ -157,35 +148,28 @@
                                         @endphp
                                         @if($eligibility['eligible'])
                                             <span class="status-badge status-active">
-                                                <i class="fas fa-check-circle mr-1"></i>
+                                                <i class="fas fa-check-circle"></i>
                                                 Eligible
                                             </span>
                                         @else
                                             <span class="status-badge status-inactive">
-                                                <i class="fas fa-times-circle mr-1"></i>
+                                                <i class="fas fa-times-circle"></i>
                                                 Not Eligible
-                                                @if(isset($eligibility['reason']))
-                                                    <br><small>{{ $eligibility['reason'] }}</small>
-                                                @endif
                                             </span>
                                         @endif
                                     </td>
                                     <td>
                                         <div class="action-group">
-                                            <a href="{{ route('donors.show', $donor->id) }}" class="btn-action btn-view"
-                                                title="View Details">
+                                            <a href="{{ route('donors.show', $donor->id) }}" class="btn-action btn-view" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('donors.edit', $donor->id) }}" class="btn-action btn-edit"
-                                                title="Edit">
+                                            <a href="{{ route('donors.edit', $donor->id) }}" class="btn-action btn-edit-action" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('donors.destroy', $donor->id) }}" method="POST"
-                                                class="delete-form"
-                                                onsubmit="return confirm('Are you sure you want to delete this donor? This action cannot be undone.')">
+                                            <form action="{{ route('donors.destroy', $donor->id) }}" method="POST" class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn-action btn-delete" title="Delete">
+                                                <button type="button" class="btn-action btn-delete-action" title="Delete" onclick="confirmDelete(this)">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -201,8 +185,14 @@
                             <i class="fas fa-users-slash"></i>
                         </div>
                         <h4>No Donors Found</h4>
-                        <p>There are no donors in the system yet.</p>
-                        <a href="{{ route('donors.create') }}" class="btn btn-add">
+                        <p>
+                            @if(request('search'))
+                                No donors found for "{{ request('search') }}". Try a different search term.
+                            @else
+                                There are no donors in the system yet.
+                            @endif
+                        </p>
+                        <a href="{{ route('donors.create') }}" class="btn btn-primary">
                             <i class="fas fa-user-plus mr-2"></i>
                             Add First Donor
                         </a>
@@ -256,39 +246,32 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Auto-submit search on input change with delay
-            const searchInput = document.querySelector('.search-input');
-            let searchTimeout;
+        function confirmDelete(button) {
+            if (confirm('Are you sure you want to delete this donor? This action cannot be undone.')) {
+                button.closest('.delete-form').submit();
+            }
+            return false;
+        }
 
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = '';
+            searchInput.closest('form').submit();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Auto-submit search on input with debounce
+            const searchInput = document.getElementById('search-input');
+            let searchTimer;
+            
             if (searchInput) {
                 searchInput.addEventListener('input', function () {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
+                    clearTimeout(searchTimer);
+                    searchTimer = setTimeout(() => {
                         this.closest('form').submit();
                     }, 500);
                 });
-
-                // Submit form when Enter is pressed in search
-                searchInput.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        this.closest('form').submit();
-                    }
-                });
             }
-
-            // Add confirmation for delete actions
-            const deleteForms = document.querySelectorAll('.delete-form');
-            deleteForms.forEach(form => {
-                form.addEventListener('submit', function (e) {
-                    if (!confirm('Are you sure you want to delete this donor? This action cannot be undone.')) {
-                        e.preventDefault();
-                    }
-                });
-            });
         });
     </script>
 @endsection
-@push('styles')
-@endpush
