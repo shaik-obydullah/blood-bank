@@ -9,8 +9,7 @@
     <!-- Success Message -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle mr-2"></i>
-            {{ session('success') }}
+            <strong>Success!</strong> {{ session('success') }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -26,13 +25,11 @@
                 <p class="detail-subtitle">Appointment #{{ str_pad($appointment->id, 6, '0', STR_PAD_LEFT) }}</p>
             </div>
             <div class="detail-actions">
-                <a href="{{ route('appointments.index') }}" class="btn btn-back">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Back to List
+                <a href="{{ route('appointments.index') }}" class="btn btn-edit">
+                    <span>Back to List</span>
                 </a>
                 <a href="{{ route('appointments.edit', $appointment->id) }}" class="btn btn-edit">
-                    <i class="fas fa-edit mr-2"></i>
-                    Edit
+                    <span>Edit Appointment</span>
                 </a>
             </div>
         </div>
@@ -40,7 +37,7 @@
         <!-- Appointment Details -->
         <div class="detail-body">
             <div class="detail-row">
-                <!-- Left Column: Basic Info -->
+                <!-- Left Column: Status & Time -->
                 <div class="detail-column">
                     <!-- Status Card -->
                     <div class="detail-card status-card">
@@ -48,50 +45,33 @@
                             <h5>Appointment Status</h5>
                         </div>
                         <div class="card-body">
-                            @php
-                                $statusInfo = [
-                                    'Pending' => ['color' => '#ff9800', 'bg_color' => '#fff3e0', 'icon' => 'clock', 'label' => 'Pending'],
-                                    'Confirmed' => ['color' => '#2196f3', 'bg_color' => '#e3f2fd', 'icon' => 'check-circle', 'label' => 'Confirmed'],
-                                    'Cancelled' => ['color' => '#f44336', 'bg_color' => '#ffebee', 'icon' => 'times-circle', 'label' => 'Cancelled'],
-                                    'Completed' => ['color' => '#4caf50', 'bg_color' => '#f1f8e9', 'icon' => 'check-double', 'label' => 'Completed']
-                                ];
-                                $info = $statusInfo[$appointment->status] ?? $statusInfo['Pending'];
-                            @endphp
-                            <div class="status-display" style="border-left: 4px solid {{ $info['color'] }}; background-color: {{ $info['bg_color'] }}; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
-                                <div style="display: flex; align-items: center;">
-                                    <div style="margin-right: 15px; font-size: 24px; color: {{ $info['color'] }};">
-                                        <i class="fas fa-{{ $info['icon'] }}"></i>
-                                    </div>
-                                    <div>
-                                        <h4 style="color: {{ $info['color'] }}; margin: 0; font-size: 18px;">{{ $appointment->status }}</h4>
-                                        <p style="color: #666; margin: 5px 0 0; font-size: 14px;">Current appointment status</p>
-                                    </div>
+                            <div class="status-display status-{{ strtolower($appointment->status) }}">
+                                <div class="status-icon">
+                                    <!-- Icon removed -->
+                                </div>
+                                <div class="status-content">
+                                    <h4>{{ $appointment->status }}</h4>
+                                    <p>Current appointment status</p>
                                 </div>
                             </div>
                             
                             <!-- Status Actions -->
                             @if($appointment->status !== 'Completed' && $appointment->status !== 'Cancelled')
-                            <div class="status-actions" style="margin-top: 20px;">
-                                <form action="{{ route('appointments.status', $appointment->id) }}" method="POST" style="display: inline;">
+                            <div class="status-actions">
+                                <form action="{{ route('appointments.status', $appointment->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @if($appointment->status === 'Pending')
-                                        <button type="submit" name="status" value="Confirmed" 
-                                                style="background: #2196f3; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; margin-right: 10px;">
-                                            <i class="fas fa-check mr-2"></i>
+                                        <button type="submit" name="status" value="Confirmed" class="status-btn confirm">
                                             Confirm Appointment
                                         </button>
                                     @endif
                                     @if($appointment->status === 'Confirmed')
-                                        <button type="submit" name="status" value="Completed" 
-                                                style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; margin-right: 10px;">
-                                            <i class="fas fa-check-double mr-2"></i>
+                                        <button type="submit" name="status" value="Completed" class="status-btn complete">
                                             Mark as Completed
                                         </button>
                                     @endif
                                     @if(in_array($appointment->status, ['Pending', 'Confirmed']))
-                                        <button type="submit" name="status" value="Cancelled" 
-                                                style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center;">
-                                            <i class="fas fa-times mr-2"></i>
+                                        <button type="submit" name="status" value="Cancelled" class="status-btn cancel">
                                             Cancel Appointment
                                         </button>
                                     @endif
@@ -102,47 +82,42 @@
                     </div>
 
                     <!-- Time Information -->
-                    <div class="detail-card" style="background: white; border: 1px solid #eee; border-radius: 6px; margin-bottom: 20px; overflow: hidden;">
-                        <div class="card-header" style="background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee;">
-                            <h5 style="margin: 0; color: #333;">Time Information</h5>
+                    <div class="detail-card">
+                        <div class="card-header">
+                            <h5>Time Information</h5>
                         </div>
-                        <div class="card-body" style="padding: 20px;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-calendar-alt" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                        <div class="card-body">
+                            <div class="info-row">
+                                <div class="info-label">
                                     Appointment Date
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->appointment_time->format('l, F d, Y') }}
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-clock" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Appointment Time
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->appointment_time->format('h:i A') }}
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-hourglass-half" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Time Until Appointment
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     @if($appointment->appointment_time > now() && !in_array($appointment->status, ['Cancelled', 'Completed']))
-                                        <span style="color: #4caf50;">
+                                        <span class="time-until upcoming">
                                             {{ $appointment->appointment_time->diffForHumans() }}
                                         </span>
                                     @elseif($appointment->appointment_time < now() && !in_array($appointment->status, ['Cancelled', 'Completed']))
-                                        <span style="color: #ff9800;">
+                                        <span class="time-until overdue">
                                             Overdue by {{ now()->diffForHumans($appointment->appointment_time, true) }}
                                         </span>
                                     @else
-                                        <span style="color: #999;">
-                                            N/A
-                                        </span>
+                                        <span style="color: #999;">N/A</span>
                                     @endif
                                 </div>
                             </div>
@@ -153,90 +128,82 @@
                 <!-- Right Column: Doctor & Donor Info -->
                 <div class="detail-column">
                     <!-- Doctor Information -->
-                    <div class="detail-card" style="background: white; border: 1px solid #eee; border-radius: 6px; margin-bottom: 20px; overflow: hidden;">
-                        <div class="card-header" style="background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee;">
-                            <h5 style="margin: 0; color: #333;">Doctor Information</h5>
+                    <div class="detail-card">
+                        <div class="card-header">
+                            <h5>Doctor Information</h5>
                         </div>
-                        <div class="card-body" style="padding: 20px;">
+                        <div class="card-body">
                             @if($appointment->doctor)
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-user-md" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Doctor Name
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->doctor->name }}
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-phone" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Contact Number
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->doctor->mobile ?? 'N/A' }}
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-map-marker-alt" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Address
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->doctor->address ?? 'N/A' }}
                                 </div>
                             </div>
                             @else
-                            <div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 12px; border-radius: 4px; font-size: 14px;">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>
-                                No doctor assigned to this appointment
+                            <div class="no-data-warning">
+                                <span>No doctor assigned to this appointment</span>
                             </div>
                             @endif
                         </div>
                     </div>
 
                     <!-- Donor Information -->
-                    <div class="detail-card" style="background: white; border: 1px solid #eee; border-radius: 6px; margin-bottom: 20px; overflow: hidden;">
-                        <div class="card-header" style="background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee;">
-                            <h5 style="margin: 0; color: #333;">Donor Information</h5>
+                    <div class="detail-card">
+                        <div class="card-header">
+                            <h5>Donor Information</h5>
                         </div>
-                        <div class="card-body" style="padding: 20px;">
+                        <div class="card-body">
                             @if($appointment->donor)
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-user-injured" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Donor Name
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->donor->name }}
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-phone" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Contact Number
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->donor->mobile }}
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-envelope" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Email
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     {{ $appointment->donor->email }}
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                    <i class="fas fa-tint" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                            <div class="info-row">
+                                <div class="info-label">
                                     Blood Group
                                 </div>
-                                <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                                <div class="info-value">
                                     @if($appointment->donor->bloodGroup)
-                                        <span style="background: #c62828; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;">
+                                        <span class="blood-group">
                                             {{ $appointment->donor->bloodGroup->name }}
                                         </span>
                                     @else
@@ -245,9 +212,8 @@
                                 </div>
                             </div>
                             @else
-                            <div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 12px; border-radius: 4px; font-size: 14px;">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>
-                                No donor assigned to this appointment
+                            <div class="no-data-warning">
+                                <span>No donor assigned to this appointment</span>
                             </div>
                             @endif
                         </div>
@@ -256,49 +222,51 @@
             </div>
 
             <!-- System Information -->
-            <div class="detail-card system-card" style="background: white; border: 1px solid #eee; border-radius: 6px; margin-top: 20px; overflow: hidden;">
-                <div class="card-header" style="background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee;">
-                    <h5 style="margin: 0; color: #333;">System Information</h5>
+            <div class="detail-card system-card">
+                <div class="card-header">
+                    <h5>System Information</h5>
                 </div>
-                <div class="card-body" style="padding: 20px;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                <i class="fas fa-hashtag" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                <div class="card-body">
+                    <div class="system-info">
+                        <div class="info-row">
+                            <div class="info-label">
                                 Appointment ID
                             </div>
-                            <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                            <div class="info-value">
                                 #{{ str_pad($appointment->id, 6, '0', STR_PAD_LEFT) }}
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                <i class="fas fa-calendar-plus" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                        <div class="info-row">
+                            <div class="info-label">
                                 Created At
                             </div>
-                            <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                            <div class="info-value">
                                 {{ $appointment->created_at->format('M d, Y h:i A') }}
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                <i class="fas fa-calendar-check" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                    </div>
+                    <div class="system-info">
+                        <div class="info-row">
+                            <div class="info-label">
                                 Last Updated
                             </div>
-                            <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                            <div class="info-value">
                                 {{ $appointment->updated_at->format('M d, Y h:i A') }}
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="color: #666; display: flex; align-items: center; font-size: 14px;">
-                                <i class="fas fa-clock" style="margin-right: 8px; width: 20px; text-align: center;"></i>
+                        <div class="info-row">
+                            <div class="info-label">
                                 Duration
                             </div>
-                            <div style="color: #333; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word;">
+                            <div class="info-value">
                                 @if($appointment->status === 'Completed')
-                                    Completed in {{ $appointment->created_at->diffForHumans($appointment->updated_at, true) }}
+                                    <span class="time-until upcoming">
+                                        Completed in {{ $appointment->created_at->diffForHumans($appointment->updated_at, true) }}
+                                    </span>
                                 @else
-                                    Active for {{ $appointment->created_at->diffForHumans(now(), true) }}
+                                    <span class="time-until upcoming">
+                                        Active for {{ $appointment->created_at->diffForHumans(now(), true) }}
+                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -308,12 +276,12 @@
 
             <!-- Notes Section -->
             @if($appointment->notes)
-            <div class="detail-card notes-card" style="background: white; border: 1px solid #eee; border-radius: 6px; margin-top: 20px; overflow: hidden;">
-                <div class="card-header" style="background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee;">
-                    <h5 style="margin: 0; color: #333;">Notes</h5>
+            <div class="detail-card notes-card">
+                <div class="card-header">
+                    <h5>Notes</h5>
                 </div>
-                <div class="card-body" style="padding: 20px;">
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #3498db; white-space: pre-line;">
+                <div class="card-body">
+                    <div class="notes-content">
                         {{ $appointment->notes }}
                     </div>
                 </div>
@@ -321,21 +289,19 @@
             @endif
 
             <!-- Danger Zone -->
-            <div class="detail-card danger-card" style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 6px; margin-top: 20px; overflow: hidden;">
-                <div class="card-header" style="background: #f8d7da; padding: 15px 20px; border-bottom: 1px solid #f5c6cb;">
-                    <h5 style="margin: 0; color: #721c24;">Danger Zone</h5>
+            <div class="detail-card danger-card">
+                <div class="card-header">
+                    <h5>Danger Zone</h5>
                 </div>
-                <div class="card-body" style="padding: 20px;">
-                    <p style="color: #856404; margin-bottom: 15px;">
+                <div class="card-body">
+                    <p class="danger-warning">
                         Once you delete an appointment, there is no going back. Please be certain.
                     </p>
-                    <form action="{{ route('appointments.destroy', $appointment->id) }}" method="POST" style="display: inline;">
+                    <form action="{{ route('appointments.destroy', $appointment->id) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="button" 
-                                style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center;"
-                                onclick="if(confirm('Are you sure you want to delete appointment #{{ str_pad($appointment->id, 6, '0', STR_PAD_LEFT) }}? This action cannot be undone.')) { this.closest('form').submit(); }">
-                            <i class="fas fa-trash mr-2"></i>
+                        <button type="button" class="btn btn-primary mt-2"
+                                onclick="if(confirm('Are you sure you want to delete appointment #{{ str_pad($appointment->id, 6, '0', STR_PAD_LEFT) }}?\n\nThis action cannot be undone!')) { this.closest('form').submit(); }">
                             Delete Appointment
                         </button>
                     </form>
@@ -345,124 +311,14 @@
     </div>
 </div>
 
-<style>
-    .dashboard-content {
-        padding: 20px;
-    }
-
-    .detail-container {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        padding: 30px;
-    }
-
-    .detail-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .detail-title h3 {
-        color: #333;
-        margin-bottom: 5px;
-        font-size: 24px;
-    }
-
-    .detail-subtitle {
-        color: #666;
-        margin: 0;
-        font-size: 14px;
-    }
-
-    .detail-actions {
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn-back {
-        background: #f8f9fa;
-        color: #333;
-        border: 1px solid #dee2e6;
-        padding: 8px 16px;
-        border-radius: 4px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        font-size: 14px;
-    }
-
-    .btn-back:hover {
-        background: #e9ecef;
-        text-decoration: none;
-    }
-
-    .btn-edit {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        font-size: 14px;
-    }
-
-    .btn-edit:hover {
-        background: #0056b3;
-        color: white;
-        text-decoration: none;
-    }
-
-    .detail-row {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-
-    .detail-column {
-        flex: 1;
-    }
-
-    @media (max-width: 992px) {
-        .detail-row {
-            flex-direction: column;
-        }
-        
-        .detail-container {
-            padding: 20px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .detail-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        
-        .detail-actions {
-            width: 100%;
-        }
-        
-        .btn-back, .btn-edit {
-            flex: 1;
-            justify-content: center;
-        }
-    }
-</style>
-
 <script>
     // Status change confirmation
     document.addEventListener('DOMContentLoaded', function() {
-        const statusButtons = document.querySelectorAll('button[name="status"]');
+        const statusButtons = document.querySelectorAll('.status-btn');
         statusButtons.forEach(button => {
             button.addEventListener('click', function(e) {
-                const status = this.value;
+                const status = this.value || this.classList.contains('confirm') ? 'Confirmed' :
+                              this.classList.contains('complete') ? 'Completed' : 'Cancelled';
                 let message = '';
                 
                 switch(status) {
@@ -477,7 +333,7 @@
                         break;
                 }
                 
-                if (!confirm(message)) {
+                if (!confirm(message + '\n\nThis action will update the appointment status.')) {
                     e.preventDefault();
                 }
             });
