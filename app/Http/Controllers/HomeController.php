@@ -10,7 +10,6 @@ use App\Models\Appointment;
 use App\Models\BloodDistribution;
 use App\Models\Donor;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class HomeController extends Controller
