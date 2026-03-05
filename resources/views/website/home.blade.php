@@ -59,9 +59,6 @@
                             <a href="{{ url('/donor-appointment') }}" class="btn btn-card-accent">
                                 <i class="fas fa-calendar-check"></i> Schedule Now
                             </a>
-                            <a href="{{ url('/donor-appointment') }}" class="btn btn-outline-white">
-                                View All
-                            </a>
                         </div>
                     </div>
                 </div>

@@ -13,8 +13,6 @@ class DonorAuthController extends Controller
      */
     public function showLoginForm()
     {
-
-
         $all_blood_groups = BloodGroup::pluck('code')->toArray();
         return view('website.donor.login', compact('all_blood_groups'));
     }
@@ -35,7 +33,7 @@ class DonorAuthController extends Controller
                 'password' => $request->password
             ])
         ) {
-            return redirect()->intended('/donor-dashboard');
+            return redirect('/donor-dashboard');
         }
 
         return back()->withErrors([
