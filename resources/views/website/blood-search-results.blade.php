@@ -64,14 +64,14 @@
                             <h4>Patient Information</h4>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="patient_name">Full Name *</label>
+                                    <label for="patient_name">Full Name <span class="required"></span></label>
                                     <input type="text" id="patient_name" name="patient_name" placeholder="Enter full name" required>
                                 </div>
                             </div>
                             
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="email">Email Address *</label>
+                                    <label for="email">Email Address <span class="required"></span></label>
                                     <input type="email" id="email" name="email" placeholder="Enter email address" required>
                                 </div>
                                 <div class="form-group">
@@ -92,7 +92,7 @@
                             <h4>Blood Request Details</h4>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="request_ml">Request Amount (ML) *</label>
+                                    <label for="request_ml">Request Amount (ML) <span class="required"></span></label>
                                     <div class="ml-input">
                                         <input type="number" id="request_ml" name="request_ml" min="250" value="250" required>
                                         <span class="ml-label">ML</span>
@@ -103,8 +103,8 @@
                         </div>
                         
                         <div class="form-actions">
-                            <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
-                            <button type="submit" class="submit-btn">
+                            <button type="button" class="btn btn-secondary" onclick="closeModal()"><i class="fas fa-arrow-left"></i> Cancel</button>
+                            <button type="submit" class="submit-btn btn btn-primary">
                                 <span id="submitText">Submit Request</span>
                                 <span id="loadingSpinner" style="display: none;">
                                     <i class="fas fa-spinner fa-spin"></i> Processing...

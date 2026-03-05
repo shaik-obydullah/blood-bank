@@ -1299,7 +1299,7 @@ select.form-control {
     font-size: 18px;
 }
 
-/* Form Actions */
+/* Form Actions (for donor form) */
 .form-actions {
     display: flex;
     justify-content: center;
@@ -1373,7 +1373,7 @@ select.form-control {
     animation: spin 1s linear infinite;
 }
 
-/* Cancel Button */
+/* Cancel Button (general) */
 .cancel-btn {
     background: #dc3545;
     color: white;
@@ -2243,6 +2243,248 @@ select.form-control {
     font-size: 14px;
 }
 
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-container {
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #dc3545;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: white;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0 10px;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    opacity: 0.8;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* Modal-specific form styles */
+.modal .form-section {
+    margin-bottom: 20px;
+}
+
+.modal .form-section h4 {
+    color: #495057;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.modal .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.modal .form-group {
+    flex: 1;
+}
+
+.modal .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.modal .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.modal .form-group input:focus {
+    outline: none;
+    border-color: #dc3545;
+}
+
+.ml-input {
+    display: flex;
+    align-items: center;
+}
+
+.ml-input input {
+    flex: 1;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.ml-label {
+    padding: 10px 15px;
+    background: #e9ecef;
+    border: 2px solid #e9ecef;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    font-weight: 500;
+}
+
+small {
+    display: block;
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.modal .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.modal .cancel-btn {
+    background: #e9ecef;
+    color: #495057;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal .cancel-btn:hover {
+    background: #dee2e6;
+}
+
+.modal .submit-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal .submit-btn:hover:not(:disabled) {
+    background: #c82333;
+}
+
+.modal .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Success Message Styles */
+.success-message {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.success-message i {
+    font-size: 64px;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.success-message h3 {
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.success-details {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.success-details p {
+    margin: 8px 0;
+}
+
+.confirmation-note {
+    background: #e7f3ff;
+    color: #004085;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.close-success-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.close-success-btn:hover {
+    background: #218838;
+}
+
 /* ==========================================================================
    11. Responsive Breakpoints
    ========================================================================== */
@@ -2708,23 +2950,49 @@ select.form-control {
    12. Alert Messages & Notifications
    ========================================================================== */
 
+.alert-message {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: opacity 0.5s ease;
+}
+
+.alert-message i {
+    font-size: 16px;
+}
+
 .alert {
-    padding: 15px 20px;
-    border-radius: 5px;
-    margin-top: 1rem;
-    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid;
 }
 
 .alert-success {
-    background: #e8f5e9;
-    color: #4caf50;
-    border: 1px solid #c8e6c9;
+    background: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
 }
 
+.alert-danger,
 .alert-error {
-    background: #ffebee;
-    color: #f44336;
-    border: 1px solid #ffcdd2;
+    background: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.alert .close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: inherit;
 }
 
 .error-message {
@@ -2746,63 +3014,6 @@ select.form-control {
     border-radius: 50%;
     border-top-color: var(--white);
     animation: spin 1s ease-in-out infinite;
-}
-
-/* Alert Messages */
-.alert-message {
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: opacity 0.5s ease;
-}
-
-.alert-message i {
-    font-size: 16px;
-}
-
-.alert-error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.alert {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid;
-}
-
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-    border-color: #c3e6cb;
-}
-
-.alert-danger {
-    background: #f8d7da;
-    color: #721c24;
-    border-color: #f5c6cb;
-}
-
-.alert .close {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: inherit;
 }
 
 /* ==========================================================================
@@ -2833,12 +3044,6 @@ select.form-control {
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes login-spin {
     to {
         transform: rotate(360deg);
     }
