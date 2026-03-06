@@ -11,6 +11,7 @@ use App\Models\BloodDistribution;
 use App\Models\Donor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class HomeController extends Controller
 {
@@ -168,7 +169,6 @@ class HomeController extends Controller
 
     public function save_donor_registration(Request $request)
     {
-        // Validate the request - this will automatically return JSON errors for AJAX
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'country' => 'required|string|max:50',
@@ -176,15 +176,23 @@ class HomeController extends Controller
             'address_line_2' => 'nullable|string|max:255',
             'mobile' => 'required|string|max:20',
             'last_donation_date' => 'nullable|date|before_or_equal:today',
-            'email' => 'required|email|max:100',
+            'email' => 'required|email|max:100|unique:donors,email',
             'birthdate' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
             'hemoglobin_level' => 'nullable|numeric|between:0,20',
             'systolic' => 'nullable|integer|between:70,200',
             'diastolic' => 'nullable|integer|between:40,130',
-            'fk_blood_group_id' => 'nullable|exists:blood_groups,id'
+            'fk_blood_group_id' => 'nullable|exists:blood_groups,id',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8'
         ]);
 
         try {
+            // Hash the password before creating
+            $validated['password'] = Hash::make($validated['password']);
+
+            // Remove password_confirmation as it's not needed in database
+            unset($validated['password_confirmation']);
+
             // Create the donor
             $donor = Donor::create($validated);
 
@@ -214,79 +222,6 @@ class HomeController extends Controller
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    public function store_donor(Request $request)
-    {
-        // Validate the request
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'country' => 'required|string|max:50',
-            'address_line_1' => 'nullable|string|max:255',
-            'address_line_2' => 'nullable|string|max:255',
-            'mobile' => 'required|string|max:20',
-            'last_donation_date' => 'nullable|date|before_or_equal:today',
-            'email' => 'required|email|max:100',
-            'birthdate' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
-            'hemoglobin_level' => 'nullable|numeric|between:0,20',
-            'systolic' => 'nullable|integer|between:70,200',
-            'diastolic' => 'nullable|integer|between:40,130',
-            'fk_blood_group_id' => 'nullable|exists:blood_groups,id'
-        ]);
-
-        try {
-            // Create the donor
-            $donor = Donor::create($validated);
-
-            // Check eligibility
-            $eligibilityStatus = $donor->getEligibilityStatus();
-
-            // Return response
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Donor registered successfully!',
-                    'data' => [
-                        'id' => $donor->id,
-                        'name' => $donor->name,
-                        'eligibility' => $eligibilityStatus
-                    ]
-                ]);
-            }
-
-            return redirect()->route('donor.registration')
-                ->with([
-                    'success' => 'Donor registered successfully! Donor ID: ' . $donor->id,
-                    'eligibility' => $eligibilityStatus
-                ]);
-
-        } catch (\Exception $e) {
-            \Log::error('Donor registration error: ' . $e->getMessage());
-
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error registering donor. Please try again.',
-                    'error' => config('app.debug') ? $e->getMessage() : null
-                ], 500);
-            }
-
-            return back()
-                ->withErrors(['error' => 'Error registering donor. Please try again.'])
-                ->withInput();
-        }
-    }
-
-    // Additional method to view donors list
     public function donors_list()
     {
         $donors = Donor::with('bloodGroup')
@@ -298,7 +233,6 @@ class HomeController extends Controller
         return view('website.donors_list', compact('donors', 'bloodGroups'));
     }
 
-    // Method to show donor details
     public function donor_details($id)
     {
         $donor = Donor::with('bloodGroup')->findOrFail($id);
