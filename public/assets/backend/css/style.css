@@ -1149,7 +1149,7 @@ textarea.form-control {
 
 .btn-submit {
     background-color: #2e7d32;
-    color:white;
+    color: white;
     padding: var(--spacing-sm) var(--spacing-lg);
 }
 

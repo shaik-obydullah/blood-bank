@@ -40,14 +40,14 @@
             <form action="{{ route('donors.update', $donor->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="form-body">
                     <!-- Personal Information -->
                     <div class="form-section">
                         <h5 class="section-title">
                             Personal Information
                         </h5>
-                        
+
                         <div class="form-row">
                             <!-- Name -->
                             <div class="form-group">
@@ -58,19 +58,19 @@
                                     <div class="input-icon">
                                         <i class="fas fa-user"></i>
                                     </div>
-                                    <input type="text" 
-                                           id="name" 
-                                           name="name" 
-                                           class="form-control @error('name') is-invalid @enderror" 
-                                           placeholder="Enter donor's full name" 
-                                           value="{{ old('name', $donor->name) }}"
-                                           required>
+                                    <input type="text"
+                                        id="name"
+                                        name="name"
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        placeholder="Enter donor's full name"
+                                        value="{{ old('name', $donor->name) }}"
+                                        required>
                                 </div>
                                 @error('name')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <!-- Email -->
                             <div class="form-group">
                                 <label for="email" class="form-label">
@@ -80,20 +80,20 @@
                                     <div class="input-icon">
                                         <i class="fas fa-envelope"></i>
                                     </div>
-                                    <input type="email" 
-                                           id="email" 
-                                           name="email" 
-                                           class="form-control @error('email') is-invalid @enderror" 
-                                           placeholder="donor@example.com" 
-                                           value="{{ old('email', $donor->email) }}"
-                                           required>
+                                    <input type="email"
+                                        id="email"
+                                        name="email"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        placeholder="donor@example.com"
+                                        value="{{ old('email', $donor->email) }}"
+                                        required>
                                 </div>
                                 @error('email')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="form-row">
                             <!-- Mobile -->
                             <div class="form-group">
@@ -104,19 +104,19 @@
                                     <div class="input-icon">
                                         <i class="fas fa-phone"></i>
                                     </div>
-                                    <input type="tel" 
-                                           id="mobile" 
-                                           name="mobile" 
-                                           class="form-control @error('mobile') is-invalid @enderror" 
-                                           placeholder="+8801712345678" 
-                                           value="{{ old('mobile', $donor->mobile) }}"
-                                           required>
+                                    <input type="tel"
+                                        id="mobile"
+                                        name="mobile"
+                                        class="form-control @error('mobile') is-invalid @enderror"
+                                        placeholder="+8801712345678"
+                                        value="{{ old('mobile', $donor->mobile) }}"
+                                        required>
                                 </div>
                                 @error('mobile')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <!-- Birthdate -->
                             <div class="form-group">
                                 <label for="birthdate" class="form-label">
@@ -126,13 +126,13 @@
                                     <div class="input-icon">
                                         <i class="fas fa-calendar-alt"></i>
                                     </div>
-                                    <input type="date" 
-                                           id="birthdate" 
-                                           name="birthdate" 
-                                           class="form-control @error('birthdate') is-invalid @enderror" 
-                                           value="{{ old('birthdate', $donor->birthdate ? \Carbon\Carbon::parse($donor->birthdate)->format('Y-m-d') : '') }}"
-                                           required
-                                           max="{{ \Carbon\Carbon::now()->subYears(18)->format('Y-m-d') }}">
+                                    <input type="date"
+                                        id="birthdate"
+                                        name="birthdate"
+                                        class="form-control @error('birthdate') is-invalid @enderror"
+                                        value="{{ old('birthdate', $donor->birthdate ? \Carbon\Carbon::parse($donor->birthdate)->format('Y-m-d') : '') }}"
+                                        required
+                                        max="{{ \Carbon\Carbon::now()->subYears(18)->format('Y-m-d') }}">
                                 </div>
                                 <small class="form-text">
                                     Donor must be at least 18 years old
@@ -143,13 +143,53 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                New Password
+                            </label>
+                            <div class="input-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input type="password" id="password" name="password"
+                                    class="form-control @error('password') is-invalid @enderror"
+                                    placeholder="Leave blank to keep current password">
+                                @error('password')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Minimum 8 characters if changing
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password_confirmation" class="form-label">
+                                Confirm New Password
+                            </label>
+                            <div class="input-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input type="password" id="password_confirmation" name="password_confirmation"
+                                    class="form-control @error('password_confirmation') is-invalid @enderror"
+                                    placeholder="Confirm new password">
+                                @error('password_confirmation')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Blood Information -->
                     <div class="form-section">
                         <h5 class="section-title">
                             Blood Information
                         </h5>
-                        
+
                         <div class="form-row">
                             <!-- Blood Group -->
                             <div class="form-group">
@@ -160,12 +200,12 @@
                                     <div class="input-icon">
                                         <i class="fas fa-tint"></i>
                                     </div>
-                                    <select id="fk_blood_group_id" 
-                                            name="fk_blood_group_id" 
-                                            class="form-control @error('fk_blood_group_id') is-invalid @enderror">
+                                    <select id="fk_blood_group_id"
+                                        name="fk_blood_group_id"
+                                        class="form-control @error('fk_blood_group_id') is-invalid @enderror">
                                         <option value="">Select Blood Group</option>
                                         @foreach($bloodGroups as $bloodGroup)
-                                            <option value="{{ $bloodGroup->id }}" 
+                                            <option value="{{ $bloodGroup->id }}"
                                                 {{ old('fk_blood_group_id', $donor->fk_blood_group_id) == $bloodGroup->id ? 'selected' : '' }}>
                                                 {{ $bloodGroup->name }} ({{ $bloodGroup->code }})
                                             </option>
@@ -176,7 +216,7 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <!-- Hemoglobin -->
                             <div class="form-group">
                                 <label for="hemoglobin_level" class="form-label">
@@ -186,15 +226,15 @@
                                     <div class="input-icon">
                                         <i class="fas fa-chart-line"></i>
                                     </div>
-                                    <input type="number" 
-                                           id="hemoglobin_level" 
-                                           name="hemoglobin_level" 
-                                           class="form-control @error('hemoglobin_level') is-invalid @enderror" 
-                                           value="{{ old('hemoglobin_level', $donor->hemoglobin_level) }}" 
-                                           step="0.01"
-                                           min="0"
-                                           max="20"
-                                           placeholder="e.g., 14.5">
+                                    <input type="number"
+                                        id="hemoglobin_level"
+                                        name="hemoglobin_level"
+                                        class="form-control @error('hemoglobin_level') is-invalid @enderror"
+                                        value="{{ old('hemoglobin_level', $donor->hemoglobin_level) }}"
+                                        step="0.01"
+                                        min="0"
+                                        max="20"
+                                        placeholder="e.g., 14.5">
                                 </div>
                                 <small class="form-text">
                                     Normal range: 12.0-16.0 g/dL (women), 13.5-17.5 g/dL (men)
@@ -204,7 +244,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="form-row">
                             <!-- Blood Pressure -->
                             <div class="form-group">
@@ -214,25 +254,25 @@
                                         <div class="input-icon">
                                             <i class="fas fa-heartbeat"></i>
                                         </div>
-                                        <input type="number" 
-                                               id="systolic" 
-                                               name="systolic" 
-                                               class="form-control @error('systolic') is-invalid @enderror" 
-                                               value="{{ old('systolic', $donor->systolic) }}" 
-                                               min="70"
-                                               max="200"
-                                               placeholder="Systolic">
+                                        <input type="number"
+                                            id="systolic"
+                                            name="systolic"
+                                            class="form-control @error('systolic') is-invalid @enderror"
+                                            value="{{ old('systolic', $donor->systolic) }}"
+                                            min="70"
+                                            max="200"
+                                            placeholder="Systolic">
                                     </div>
                                     <span class="bp-separator">/</span>
                                     <div class="input-group">
-                                        <input type="number" 
-                                               id="diastolic" 
-                                               name="diastolic" 
-                                               class="form-control @error('diastolic') is-invalid @enderror" 
-                                               value="{{ old('diastolic', $donor->diastolic) }}" 
-                                               min="40"
-                                               max="130"
-                                               placeholder="Diastolic">
+                                        <input type="number"
+                                            id="diastolic"
+                                            name="diastolic"
+                                            class="form-control @error('diastolic') is-invalid @enderror"
+                                            value="{{ old('diastolic', $donor->diastolic) }}"
+                                            min="40"
+                                            max="130"
+                                            placeholder="Diastolic">
                                     </div>
                                 </div>
                                 <small class="form-text">
@@ -245,7 +285,7 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <!-- Last Donation Date -->
                             <div class="form-group">
                                 <label for="last_donation_date" class="form-label">
@@ -255,12 +295,12 @@
                                     <div class="input-icon">
                                         <i class="fas fa-calendar-check"></i>
                                     </div>
-                                    <input type="date" 
-                                           id="last_donation_date" 
-                                           name="last_donation_date" 
-                                           class="form-control @error('last_donation_date') is-invalid @enderror" 
-                                           value="{{ old('last_donation_date', $donor->last_donation_date ? \Carbon\Carbon::parse($donor->last_donation_date)->format('Y-m-d') : '') }}"
-                                           max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                    <input type="date"
+                                        id="last_donation_date"
+                                        name="last_donation_date"
+                                        class="form-control @error('last_donation_date') is-invalid @enderror"
+                                        value="{{ old('last_donation_date', $donor->last_donation_date ? \Carbon\Carbon::parse($donor->last_donation_date)->format('Y-m-d') : '') }}"
+                                        max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 </div>
                                 <small class="form-text">
                                     Leave empty if first-time donor
@@ -271,13 +311,13 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Address Information -->
                     <div class="form-section">
                         <h5 class="section-title">
                             Address Information
                         </h5>
-                        
+
                         <!-- Country -->
                         <div class="form-group">
                             <label for="country" class="form-label">
@@ -287,10 +327,10 @@
                                 <div class="input-icon">
                                     <i class="fas fa-globe"></i>
                                 </div>
-                                <select id="country" 
-                                        name="country" 
-                                        class="form-control @error('country') is-invalid @enderror" 
-                                        required>
+                                <select id="country"
+                                    name="country"
+                                    class="form-control @error('country') is-invalid @enderror"
+                                    required>
                                     <option value="">Select Country</option>
                                     <option value="Bangladesh" {{ old('country', $donor->country) == 'Bangladesh' ? 'selected' : '' }}>Bangladesh</option>
                                     <option value="USA" {{ old('country', $donor->country) == 'USA' ? 'selected' : '' }}>United States</option>
@@ -304,7 +344,7 @@
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-row">
                             <!-- Address Line 1 -->
                             <div class="form-group">
@@ -315,18 +355,18 @@
                                     <div class="input-icon">
                                         <i class="fas fa-home"></i>
                                     </div>
-                                    <input type="text" 
-                                           id="address_line_1" 
-                                           name="address_line_1" 
-                                           class="form-control @error('address_line_1') is-invalid @enderror" 
-                                           value="{{ old('address_line_1', $donor->address_line_1) }}" 
-                                           placeholder="House #, Street, Area">
+                                    <input type="text"
+                                        id="address_line_1"
+                                        name="address_line_1"
+                                        class="form-control @error('address_line_1') is-invalid @enderror"
+                                        value="{{ old('address_line_1', $donor->address_line_1) }}"
+                                        placeholder="House #, Street, Area">
                                 </div>
                                 @error('address_line_1')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <!-- Address Line 2 -->
                             <div class="form-group">
                                 <label for="address_line_2" class="form-label">
@@ -336,12 +376,12 @@
                                     <div class="input-icon">
                                         <i class="fas fa-home"></i>
                                     </div>
-                                    <input type="text" 
-                                           id="address_line_2" 
-                                           name="address_line_2" 
-                                           class="form-control @error('address_line_2') is-invalid @enderror" 
-                                           value="{{ old('address_line_2', $donor->address_line_2) }}" 
-                                           placeholder="Additional address details">
+                                    <input type="text"
+                                        id="address_line_2"
+                                        name="address_line_2"
+                                        class="form-control @error('address_line_2') is-invalid @enderror"
+                                        value="{{ old('address_line_2', $donor->address_line_2) }}"
+                                        placeholder="Additional address details">
                                 </div>
                                 @error('address_line_2')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -400,30 +440,30 @@
                 if (document.getElementById('country')) document.getElementById('country').value = originalFormValues.country;
                 if (document.getElementById('address_line_1')) document.getElementById('address_line_1').value = originalFormValues.address_line_1;
                 if (document.getElementById('address_line_2')) document.getElementById('address_line_2').value = originalFormValues.address_line_2;
-                
+
                 // Clear validation errors
                 document.querySelectorAll('.is-invalid').forEach(el => {
                     el.classList.remove('is-invalid');
                 });
-                
+
                 // Show success message
                 const alertDiv = document.createElement('div');
                 alertDiv.className = 'alert alert-success alert-dismissible fade show';
                 alertDiv.innerHTML = `
-                    <i class="fas fa-check-circle mr-2"></i>
-                    Form has been reset to original values.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                `;
-                
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Form has been reset to original values.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        `;
+
                 const existingAlert = document.querySelector('.alert-success');
                 if (existingAlert) {
                     existingAlert.remove();
                 }
-                
+
                 document.querySelector('.form-body').insertBefore(alertDiv, document.querySelector('.form-body').firstChild);
-                
+
                 // Auto-remove success message after 3 seconds
                 setTimeout(() => {
                     if (alertDiv.parentNode) {
@@ -433,12 +473,12 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Set max dates
             const today = new Date().toISOString().split('T')[0];
             const minBirthdate = new Date();
             minBirthdate.setFullYear(minBirthdate.getFullYear() - 18);
-            
+
             if (document.getElementById('last_donation_date')) {
                 document.getElementById('last_donation_date').max = today;
             }
@@ -448,10 +488,10 @@
 
             // Form validation
             const form = document.querySelector('form');
-            
-            form.addEventListener('submit', function(e) {
+
+            form.addEventListener('submit', function (e) {
                 let isValid = true;
-                
+
                 // Validate required fields
                 const requiredInputs = form.querySelectorAll('[required]');
                 requiredInputs.forEach(input => {
@@ -467,9 +507,38 @@
                     const birthdate = new Date(birthdateInput.value);
                     const minDate = new Date();
                     minDate.setFullYear(minDate.getFullYear() - 18);
-                    
+
                     if (birthdate > minDate) {
                         birthdateInput.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                }
+
+                const password = document.getElementById('password');
+                const confirm = document.getElementById('password_confirmation');
+
+                // Only validate if password fields exist on this page
+                if (password && confirm) {
+                    // Remove any previous error styling
+                    password.classList.remove('is-invalid');
+                    confirm.classList.remove('is-invalid');
+
+                    // If both are empty, skip validation (allowed on edit)
+                    if (password.value === '' && confirm.value === '') {
+                        // No action needed
+                    }
+                    // Check if passwords match
+                    else if (password.value !== confirm.value) {
+                        e.preventDefault();
+                        confirm.classList.add('is-invalid');
+                        alert('Passwords do not match!');
+                        isValid = false;
+                    }
+                    // Check minimum length (optional - for create page)
+                    else if (password.value.length > 0 && password.value.length < 8) {
+                        e.preventDefault();
+                        password.classList.add('is-invalid');
+                        alert('Password must be at least 8 characters long.');
                         isValid = false;
                     }
                 }

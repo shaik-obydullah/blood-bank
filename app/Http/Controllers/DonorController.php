@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Donor;
 use App\Models\BloodGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class DonorController extends Controller
 {
@@ -80,12 +81,20 @@ class DonorController extends Controller
             'hemoglobin_level' => 'nullable|numeric|between:0,20',
             'systolic' => 'nullable|integer|between:70,200',
             'diastolic' => 'nullable|integer|between:40,130',
-            'fk_blood_group_id' => 'nullable|exists:blood_groups,id'
+            'fk_blood_group_id' => 'nullable|exists:blood_groups,id',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8'
         ]);
 
         try {
+            // Hash the password before creating
+            $validated['password'] = Hash::make($validated['password']);
+
+            // Remove password_confirmation as it's not needed in database
+            unset($validated['password_confirmation']);
+
             // Create donor
-            $donor = Donor::create($validated);
+            Donor::create($validated);
 
             // Return to donors list with success message
             return redirect()->route('donors.index')
@@ -137,14 +146,35 @@ class DonorController extends Controller
             'hemoglobin_level' => 'nullable|numeric|between:0,20',
             'systolic' => 'nullable|integer|between:70,200',
             'diastolic' => 'nullable|integer|between:40,130',
-            'fk_blood_group_id' => 'nullable|exists:blood_groups,id'
+            'fk_blood_group_id' => 'nullable|exists:blood_groups,id',
+            'password' => 'nullable|string|min:8|confirmed',
+            'password_confirmation' => 'nullable|string|min:8'
         ]);
 
-        $donor = Donor::findOrFail($id);
-        $donor->update($validated);
+        try {
+            // Hash the password if it was provided
+            if (!empty($validated['password'])) {
+                $validated['password'] = Hash::make($validated['password']);
+            } else {
+                // Remove password from array if not provided
+                unset($validated['password']);
+            }
 
-        return redirect()->route('donors.index')
-            ->with('success', 'Donor updated successfully!');
+            // Remove password_confirmation as it's not needed in database
+            unset($validated['password_confirmation']);
+
+            // Update donor
+            $donor = Donor::findOrFail($id);
+            $donor->update($validated);
+
+            return redirect()->route('donors.index')
+                ->with('success', 'Donor updated successfully!');
+
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['error' => 'Failed to update donor: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**
