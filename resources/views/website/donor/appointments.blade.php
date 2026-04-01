@@ -64,65 +64,37 @@
         </div>
         
         <div class="card-body">
-            <form action="{{ url('/appointment-store') }}" method="POST" class="appointment-form">
-                @csrf
-                <div class="form-grid">
-                    <!-- Date Selection -->
-                    <div class="form-group">
-                        <label class="form-label">Select Date</label>
-                        <div class="input-group">
-                            <div class="input-icon">
-                                <i class="fas fa-calendar-day"></i>
-                            </div>
-                            <input type="date" 
-                                   name="appointment_date" 
-                                   class="form-control" 
-                                   id="appointment-date"
-                                   required
-                                   min="{{ date('Y-m-d') }}"
-                                   value="{{ old('appointment_date') }}">
-                        </div>
-                    </div>
-                    
-                    <!-- Time Selection -->
-                    <div class="form-group">
-                        <label class="form-label">Select Time</label>
-                        <div class="input-group">
-                            <div class="input-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <select name="appointment_time" 
-                                    class="form-control" 
-                                    id="appointment-time" 
-                                    required>
-                                <option value="">Choose time</option>
-                                <option value="09:00" {{ old('appointment_time') == '09:00' ? 'selected' : '' }}>9:00 AM</option>
-                                <option value="10:00" {{ old('appointment_time') == '10:00' ? 'selected' : '' }}>10:00 AM</option>
-                                <option value="11:00" {{ old('appointment_time') == '11:00' ? 'selected' : '' }}>11:00 AM</option>
-                                <option value="12:00" {{ old('appointment_time') == '12:00' ? 'selected' : '' }}>12:00 PM</option>
-                                <option value="14:00" {{ old('appointment_time') == '14:00' ? 'selected' : '' }}>2:00 PM</option>
-                                <option value="15:00" {{ old('appointment_time') == '15:00' ? 'selected' : '' }}>3:00 PM</option>
-                                <option value="16:00" {{ old('appointment_time') == '16:00' ? 'selected' : '' }}>4:00 PM</option>
-                                <option value="17:00" {{ old('appointment_time') == '17:00' ? 'selected' : '' }}>5:00 PM</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Hidden datetime field for submission -->
-                <input type="hidden" name="appointment_datetime" id="appointment-datetime" value="{{ old('appointment_datetime') }}">
-                
-                <!-- Submit Button -->
-                <div class="form-footer">
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-calendar-check"></i> Book Appointment
-                    </button>
-                    <div class="info-note">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Appointments typically take 30-45 minutes</span>
-                    </div>
-                </div>
-            </form>
+
+<div class="table-responsive">
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Appointment Date & Time</th>
+                <th>Request</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($pending_appointments as $appointment)
+            <tr>
+                <td>
+                    <div class="appointment-time">{{ $appointment->appointment_time->format('M d, Y') }}</div>
+                    <div class="appointment-date">{{ $appointment->appointment_time->format('h:i A') }}</div>
+                </td>
+                <td>
+                    <form action="{{ url('/appointment-store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="appointment_id" value="{{ $appointment->id }}">
+                        <button type="submit" class="request-btn">
+                            Request
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
         </div>
     </div>
 
@@ -269,31 +241,4 @@
     </div>
     @endif
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.getElementById('appointment-date');
-    const timeSelect = document.getElementById('appointment-time');
-    const datetimeInput = document.getElementById('appointment-datetime');
-    
-    function updateDateTime() {
-        if (dateInput.value && timeSelect.value) {
-            const dateTimeString = `${dateInput.value}T${timeSelect.value}:00`;
-            datetimeInput.value = dateTimeString;
-        }
-    }
-    
-    dateInput.addEventListener('change', updateDateTime);
-    timeSelect.addEventListener('change', updateDateTime);
-    
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.min = today;
-    
-    // Restore form values if there was an error
-    if(dateInput.value) {
-        updateDateTime();
-    }
-});
-</script>
 @endsection

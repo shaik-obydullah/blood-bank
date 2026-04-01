@@ -29,10 +29,21 @@
         <!-- Main Container -->
         <div class="list-container">
             <!-- Header -->
+
             <div class="list-header">
-                <div class="list-title">
-                    <h3>Appointments ({{ $appointments->total() }})</h3>
-                </div>
+                <form method="GET" action="{{ route('appointments.index') }}" style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                    <div style="flex: 1; min-width: 0;">
+                        <!-- Optional: You can keep the title here or remove it -->
+                        <h3 style="margin: 0;">Appointments ({{ $appointments->total() }})</h3>
+                    </div>
+                    <div style="min-width: 150px;">
+                        <!-- You can add sort dropdown here if needed -->
+                    </div>
+                    <a href="{{ route('appointments.create') }}" class="btn btn-primary btn-add">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Appointment
+                    </a>
+                </form>
             </div>
 
             <!-- Filter Section -->

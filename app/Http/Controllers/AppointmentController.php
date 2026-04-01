@@ -103,10 +103,8 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'fk_donor_id' => 'required|exists:donors,id',
             'fk_doctor_id' => 'required|exists:doctors,id',
             'appointment_time' => 'required|date',
-            'status' => 'required|in:Pending,Confirmed,Cancelled,Completed',
         ]);
 
         // Create appointment

@@ -130,6 +130,42 @@
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                Password <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input type="password" id="password" name="password"
+                                    class="form-control @error('password') is-invalid @enderror"
+                                    placeholder="Enter password" required>
+                                @error('password')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password_confirmation" class="form-label">
+                                Confirm Password <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input type="password" id="password_confirmation" name="password_confirmation"
+                                    class="form-control @error('password_confirmation') is-invalid @enderror"
+                                    placeholder="Confirm password" required>
+                                @error('password_confirmation')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Blood Information -->
                     <div class="form-section">
                         <h5 class="section-title">
@@ -371,11 +407,23 @@
                 if (!isNaN(value) && (value < 0 || value > 20)) {
                     this.classList.add('is-invalid');
                     this.nextElementSibling.innerHTML = `
-                            <i class="fas fa-exclamation-triangle mr-1"></i>
-                            Value must be between 0 and 20 g/dL
-                        `;
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        Value must be between 0 and 20 g/dL
+                                    `;
                 } else {
                     this.classList.remove('is-invalid');
+                }
+            });
+
+            // Simple password match validation on form submit
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const password = document.getElementById('password').value;
+                const confirm = document.getElementById('password_confirmation').value;
+
+                if (password !== confirm) {
+                    e.preventDefault();
+                    alert('Passwords do not match!');
+                    document.getElementById('password_confirmation').classList.add('is-invalid');
                 }
             });
 
@@ -403,9 +451,9 @@
                     systolicInput.classList.add('is-invalid');
                     diastolicInput.classList.add('is-invalid');
                     diastolicInput.nextElementSibling.innerHTML = `
-                            <i class="fas fa-exclamation-triangle mr-1"></i>
-                            Systolic must be greater than diastolic
-                        `;
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        Systolic must be greater than diastolic
+                                    `;
                 }
             }
 

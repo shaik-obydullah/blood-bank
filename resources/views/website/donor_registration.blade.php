@@ -43,6 +43,48 @@
                         <div class="error-message" id="birthdate-error"></div>
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password" class="form-label required">
+                            Password
+                        </label>
+                        <div class="input-group">
+                            <div class="input-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <input type="password" id="password" name="password"
+                                class="form-control @error('password') is-invalid @enderror"
+                                placeholder="Enter password" required>
+                            @error('password')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Password must be at least 8 characters long
+                        </small>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label for="password_confirmation" class="required">
+                            Confirm Password
+                        </label>
+                        <div class="input-group">
+                            <div class="input-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                class="form-control @error('password_confirmation') is-invalid @enderror"
+                                placeholder="Confirm password" required>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Blood Information Section -->
@@ -161,8 +203,16 @@
 
             // Set max date for last donation date and birthdate
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('last_donation_date').max = today;
-            document.getElementById('birthdate').max = today;
+            const lastDonationInput = document.getElementById('last_donation_date');
+            const birthdateInput = document.getElementById('birthdate');
+
+            if (lastDonationInput) lastDonationInput.max = today;
+
+            // Calculate min birthdate (18 years ago)
+            const minBirthdate = new Date();
+            minBirthdate.setFullYear(minBirthdate.getFullYear() - 18);
+            const minBirthdateStr = minBirthdate.toISOString().split('T')[0];
+            if (birthdateInput) birthdateInput.max = minBirthdateStr;
 
             // Form submission handler
             form.addEventListener('submit', async function (e) {
@@ -170,6 +220,33 @@
 
                 // Reset previous errors
                 resetErrors();
+
+                // Validate all fields before submission
+                let isValid = true;
+
+                // Run all validations
+                isValid = validateName(document.getElementById('name')) && isValid;
+                isValid = validateEmail(document.getElementById('email')) && isValid;
+                isValid = validateMobile(document.getElementById('mobile')) && isValid;
+                isValid = validateBirthdate(document.getElementById('birthdate')) && isValid;
+                isValid = validatePassword() && isValid;
+                isValid = validateHemoglobin(document.getElementById('hemoglobin_level')) && isValid;
+                isValid = validateSystolic(document.getElementById('systolic')) && isValid;
+                isValid = validateDiastolic(document.getElementById('diastolic')) && isValid;
+                isValid = validateLastDonationDate(document.getElementById('last_donation_date')) && isValid;
+
+                // Validate country (if select exists and is required)
+                const countrySelect = document.getElementById('country');
+                if (countrySelect && countrySelect.required && !countrySelect.value) {
+                    showFieldError(countrySelect, 'Please select a country');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    setLoadingState(false);
+                    showMessage('Please fix the errors in the form', 'error');
+                    return;
+                }
 
                 // Show loading state
                 setLoadingState(true);
@@ -230,6 +307,68 @@
                 }
             });
 
+            // ADDED: Password validation function
+            function validatePassword() {
+                const password = document.getElementById('password');
+                const confirm = document.getElementById('password_confirmation');
+
+                if (!password || !confirm) return true;
+                let isValid = true;
+
+                // Clear previous errors
+                clearFieldError(password);
+                clearFieldError(confirm);
+
+                // Check if passwords match
+                if (password.value !== confirm.value) {
+                    showFieldError(confirm, 'Passwords do not match');
+                    isValid = false;
+                }
+
+                // Check minimum length (8 characters)
+                if (password.value.length > 0 && password.value.length < 8) {
+                    showFieldError(password, 'Password must be at least 8 characters long');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // ADDED: Real-time password validation
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('password_confirmation');
+
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function () {
+                    if (this.value.length > 0 && this.value.length < 8) {
+                        showFieldError(this, 'Password must be at least 8 characters long');
+                    } else {
+                        clearFieldError(this);
+                        // Also check confirm password if it has value
+                        if (confirmInput && confirmInput.value) {
+                            validatePasswordMatch();
+                        }
+                    }
+                });
+            }
+
+            if (confirmInput) {
+                confirmInput.addEventListener('input', validatePasswordMatch);
+            }
+
+            function validatePasswordMatch() {
+                const password = document.getElementById('password');
+                const confirm = document.getElementById('password_confirmation');
+
+                if (!password || !confirm) return;
+
+                if (confirm.value && password.value !== confirm.value) {
+                    showFieldError(confirm, 'Passwords do not match');
+                } else {
+                    clearFieldError(confirm);
+                }
+            }
+
             // Helper functions
             function setLoadingState(isLoading) {
                 submitBtn.disabled = isLoading;
@@ -275,46 +414,61 @@
 
             // Real-time validation
             const nameInput = document.getElementById('name');
-            nameInput.addEventListener('blur', function () {
-                validateName(this);
-            });
+            if (nameInput) {
+                nameInput.addEventListener('blur', function () {
+                    validateName(this);
+                });
+            }
 
             const mobileInput = document.getElementById('mobile');
-            mobileInput.addEventListener('blur', function () {
-                validateMobile(this);
-            });
+            if (mobileInput) {
+                mobileInput.addEventListener('blur', function () {
+                    validateMobile(this);
+                });
+            }
 
             const emailInput = document.getElementById('email');
-            emailInput.addEventListener('blur', function () {
-                validateEmail(this);
-            });
+            if (emailInput) {
+                emailInput.addEventListener('blur', function () {
+                    validateEmail(this);
+                });
+            }
 
-            const birthdateInput = document.getElementById('birthdate');
-            birthdateInput.addEventListener('blur', function () {
-                validateBirthdate(this);
-            });
+            if (birthdateInput) {
+                birthdateInput.addEventListener('blur', function () {
+                    validateBirthdate(this);
+                });
+            }
 
             const hemoglobinInput = document.getElementById('hemoglobin_level');
-            hemoglobinInput.addEventListener('blur', function () {
-                validateHemoglobin(this);
-            });
+            if (hemoglobinInput) {
+                hemoglobinInput.addEventListener('blur', function () {
+                    validateHemoglobin(this);
+                });
+            }
 
             const systolicInput = document.getElementById('systolic');
-            systolicInput.addEventListener('blur', function () {
-                validateSystolic(this);
-            });
+            if (systolicInput) {
+                systolicInput.addEventListener('blur', function () {
+                    validateSystolic(this);
+                });
+            }
 
             const diastolicInput = document.getElementById('diastolic');
-            diastolicInput.addEventListener('blur', function () {
-                validateDiastolic(this);
-            });
+            if (diastolicInput) {
+                diastolicInput.addEventListener('blur', function () {
+                    validateDiastolic(this);
+                });
+            }
 
-            const lastDonationInput = document.getElementById('last_donation_date');
-            lastDonationInput.addEventListener('change', function () {
-                validateLastDonationDate(this);
-            });
+            if (lastDonationInput) {
+                lastDonationInput.addEventListener('change', function () {
+                    validateLastDonationDate(this);
+                });
+            }
 
             function validateName(input) {
+                if (!input) return true;
                 if (input.value.trim().length < 2) {
                     showFieldError(input, 'Name must be at least 2 characters long');
                     return false;
@@ -324,6 +478,7 @@
             }
 
             function validateMobile(input) {
+                if (!input) return true;
                 if (!input.value.trim()) {
                     showFieldError(input, 'Mobile number is required');
                     return false;
@@ -337,6 +492,7 @@
             }
 
             function validateEmail(input) {
+                if (!input) return true;
                 if (!input.value.trim()) {
                     showFieldError(input, 'Email is required');
                     return false;
@@ -350,6 +506,7 @@
             }
 
             function validateBirthdate(input) {
+                if (!input) return true;
                 if (!input.value) {
                     showFieldError(input, 'Date of birth is required');
                     return false;
@@ -374,6 +531,7 @@
             }
 
             function validateHemoglobin(input) {
+                if (!input) return true;
                 if (input.value) {
                     const value = parseFloat(input.value);
                     if (isNaN(value) || value < 0 || value > 20) {
@@ -386,6 +544,7 @@
             }
 
             function validateSystolic(input) {
+                if (!input) return true;
                 if (input.value) {
                     const value = parseInt(input.value);
                     if (isNaN(value) || value < 70 || value > 200) {
@@ -398,6 +557,7 @@
             }
 
             function validateDiastolic(input) {
+                if (!input) return true;
                 if (input.value) {
                     const value = parseInt(input.value);
                     if (isNaN(value) || value < 40 || value > 130) {
@@ -410,6 +570,7 @@
             }
 
             function validateLastDonationDate(input) {
+                if (!input) return true;
                 if (input.value && input.value > today) {
                     showFieldError(input, 'Last donation date cannot be in the future');
                     input.value = '';
@@ -420,6 +581,7 @@
             }
 
             function showFieldError(input, message) {
+                if (!input) return;
                 input.classList.add('error');
                 const errorId = `${input.name}-error`;
                 const errorElement = document.getElementById(errorId);
@@ -430,6 +592,7 @@
             }
 
             function clearFieldError(input) {
+                if (!input) return;
                 input.classList.remove('error');
                 const errorId = `${input.name}-error`;
                 const errorElement = document.getElementById(errorId);
@@ -440,21 +603,23 @@
 
             // Country selector enhancement
             const countrySelect = document.getElementById('country');
-            countrySelect.addEventListener('change', function () {
-                if (this.value === 'Other') {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.name = 'country';
-                    input.id = 'country';
-                    input.placeholder = 'Enter country name';
-                    input.value = '';
-                    input.style.width = '100%';
-                    input.className = 'form-select';
+            if (countrySelect) {
+                countrySelect.addEventListener('change', function () {
+                    if (this.value === 'Other') {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.name = 'country';
+                        input.id = 'country';
+                        input.placeholder = 'Enter country name';
+                        input.value = '';
+                        input.style.width = '100%';
+                        input.className = 'form-select';
 
-                    this.parentNode.replaceChild(input, this);
-                    input.focus();
-                }
-            });
+                        this.parentNode.replaceChild(input, this);
+                        input.focus();
+                    }
+                });
+            }
         });
     </script>
 @endpush

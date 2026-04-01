@@ -23,68 +23,32 @@ class DonorDashboardController extends Controller
             ->orderBy('appointment_time', 'desc')
             ->get();
 
-        return view('website.donor.appointments', compact('all_blood_groups', 'appointments'));
-    }
-
-    public function storeAppointment(Request $request)
-    {
-        $validated = $request->validate([
-            'appointment_datetime' => 'required|date|after:now'
-        ]);
-
-        $donor = Auth::guard('donor')->user();
-        $eligibility = $donor->getEligibilityStatus();
-
-        if (!$eligibility['eligible']) {
-            return redirect()->route('donor.appointments')
-                ->with('error', 'You are not eligible to donate at this time. Please check your profile for details.')
-                ->withInput();
-        }
-
-        $appointmentDate = \Carbon\Carbon::parse($validated['appointment_datetime'])->format('Y-m-d');
-        $existingAppointment = Appointment::where('fk_donor_id', $donor->id)
-            ->whereDate('appointment_time', $appointmentDate)
-            ->whereIn('status', ['Pending', 'Confirmed'])
-            ->first();
-
-        if ($existingAppointment) {
-            return redirect()->route('donor.appointments')
-                ->with('error', 'You already have an appointment scheduled for this date.')
-                ->withInput();
-        }
-
-        $lastAppointment = Appointment::where('fk_donor_id', $donor->id)
-            ->where('status', '!=', 'Cancelled')
+        $pending_appointments = Appointment::where('status', 'Pending')
             ->where('appointment_time', '>', now())
-            ->orderBy('appointment_time', 'desc')
-            ->first();
+            ->get();
 
-        if ($lastAppointment) {
-            $minDate = $lastAppointment->appointment_time->addDays(7);
-            if (\Carbon\Carbon::parse($validated['appointment_datetime'])->lt($minDate)) {
-                return redirect('/donor-appointment')
-                    ->with('error', 'You must wait at least 7 days between appointments.')
-                    ->withInput();
-            }
-        }
-
-        try {
-            Appointment::create([
-                'fk_donor_id' => $donor->id,
-                'appointment_time' => $validated['appointment_datetime'],
-                'status' => 'Pending'
-            ]);
-
-            return redirect('/donor-appointment')
-                ->with('success', 'Appointment booked successfully for ' .
-                    \Carbon\Carbon::parse($validated['appointment_datetime'])->format('F j, Y \a\t g:i A'));
-
-        } catch (\Exception $e) {
-            return redirect('/donor-appointment')
-                ->with('error', 'Failed to book appointment. Please try again.')
-                ->withInput();
-        }
+        return view('website.donor.appointments', compact('all_blood_groups', 'appointments', 'pending_appointments'));
     }
+
+ public function storeAppointment(Request $request)
+{
+    $donor = Auth::guard('donor')->user();
+
+    $appointment = Appointment::find($request->appointment_id);
+    
+    if ($appointment) {
+        $appointment->update([
+            'fk_donor_id' => $donor->id,
+            'status' => 'Confirmed'
+        ]);
+        
+        return redirect('/donor-appointment')
+            ->with('success', 'Appointment requested successfully!');
+    }
+    
+    return redirect('/donor-appointment')
+        ->with('error', 'Appointment not found.');
+}
 
     public function history()
     {
