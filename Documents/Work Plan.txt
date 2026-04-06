@@ -1,0 +1,33 @@
+In GitHub
+
+1. Before start the work make sure development and main branch in same
+2. then checkout the appointment branch and then implement the changes 
+
+
+Allocated Appointment
+
+1. Create a status field named allocated
+2. In Frontend, only show the allocated appointment
+3. Then user can just request appointment 
+
+
+Future Improvement:
+
+1. Create forgot password feature
+2. Make a public api so that the blood donation bank can be shared with others
+3. Patient panel for createing one stop service for animia patient
+
+
+Limitation
+
+1. There is no system for real time chat, we need socket server to do that
+2. If too many request come once the system could no handle all request properly
+3. If doctor find any anomanly the system can not record the anomaly
+4. There is no way to store patient medical record
+5. There is no way to store donar medical record, the system made to design that if any anomaly found the doctor can not take the blood on that spot
+
+
+Why this software is unique
+
+1. The system is extremely simple but effective
+2. The learning curve of this soffware is so easy, you do not need to train them whole week just need some hours to tain them whole function 
